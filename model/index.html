@@ -147,6 +147,7 @@ a{color:var(--funnel)}.toInputs{display:none}
       <p class="cap">Measured by running the funnel shocks alone, then the book and market shocks alone. The ± column is one standard deviation of annual revenue with both on. <a href="#monteCarlo">How this simulation works ↓</a></p>
       <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel: acquisition and churn</span><span><i style="background:var(--book)"></i>Book and market</span></div>
       <div class="shares" id="shares"></div>
+      <p class="cap" style="margin-top:8px">This isn't a direct setting — it's a "try this scenario" button. Pick the split you want to see (say, trading/market responsible for 50% of the wobble) and the year you want it in, and it works backwards, quietly turning the trading/market randomness up or down until that split comes out true on the chart above. It doesn't touch the client-side randomness at all.</p>
       <div class="rebal">
         <label for="tgtShare">Rescale book shocks to</label>
         <select id="tgtShare"><option value=".3">30%</option><option value=".4">40%</option><option value=".5" selected>50%</option><option value=".6">60%</option><option value=".7">70%</option></select>
