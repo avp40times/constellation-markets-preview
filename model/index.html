@@ -138,13 +138,13 @@ a{color:var(--funnel)}.toInputs{display:none}
     </section>
     <section class="card">
       <h2>Revenue range against costs, annualised</h2>
-      <p class="cap">300 simulated paths with every shock switched on. Costs are the base case, including one-off build costs.</p>
+      <p class="cap">300 simulated paths with every shock switched on. Costs are the base case, including one-off build costs. <a href="#monteCarlo">How this simulation works ↓</a></p>
       <div class="legend"><span><i style="background:var(--funnel);opacity:.25"></i>P10 to P90 revenue</span><span><i class="ln"></i>Median revenue</span><span><i class="dash"></i>Base-case costs</span></div>
       <div class="chart" id="chFan"></div>
     </section>
     <section class="card">
       <h2>What drives revenue variability, by year</h2>
-      <p class="cap">Measured by running the funnel shocks alone, then the book and market shocks alone. The ± column is one standard deviation of annual revenue with both on.</p>
+      <p class="cap">Measured by running the funnel shocks alone, then the book and market shocks alone. The ± column is one standard deviation of annual revenue with both on. <a href="#monteCarlo">How this simulation works ↓</a></p>
       <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel: acquisition and churn</span><span><i style="background:var(--book)"></i>Book and market</span></div>
       <div class="shares" id="shares"></div>
       <div class="rebal">
@@ -164,7 +164,7 @@ a{color:var(--funnel)}.toInputs{display:none}
     </section>
     <section class="card">
       <h2>Investor return after five years</h2>
-      <p class="cap">Exit value plus cash, divided by money invested. Includes gap-day losses. Any cash shortfall counts as extra money invested.</p>
+      <p class="cap">Exit value plus cash, divided by money invested. Includes gap-day losses. Any cash shortfall counts as extra money invested. <a href="#monteCarlo">How this simulation works ↓</a></p>
       <div class="chart" id="chMoic"></div>
     </section>
   </div>
@@ -225,9 +225,12 @@ a{color:var(--funnel)}.toInputs{display:none}
       </ul>
     </div>
   </section>
-  <section class="card">
-    <h2>Fixed shock assumptions</h2>
-    <p class="cap">These drive the Monte Carlo simulation behind the revenue range, variability and investor-return charts. They are no longer adjustable from the rail (see Limits of this draft); listed here for transparency.</p>
+  <section class="card" id="monteCarlo">
+    <h2>How the Monte Carlo simulation works</h2>
+    <p class="cap">This is what sits behind the three charts above that link here: the revenue range, the variability breakdown, and the investor-return distribution. Every other chart on the page (the client stack, the survival curve, the EBITDA tornado, the P&amp;L table) is the single, shock-free base case — this is the only place randomness enters the model.</p>
+    <p class="cap">The engine runs the five-year path 300 times. Each run, every month gets a random shock from two separate channels: a <b>book and market</b> channel (how far trading activity and the B-book result swing from their base-case levels that month) and a <b>funnel</b> channel (how far new client numbers and the churn rate swing). Both channels are autocorrelated rather than pure noise — a strong or weak month has momentum into the next one, at the persistence rates in the table below — so a run can go on a real hot streak or cold streak, the way an actual business does, rather than jumping around randomly month to month. Each run separately carries a chance, every month, of a gap-day tail event: a sudden market move through client stop levels, absorbed as a cash loss because of negative balance protection.</p>
+    <p class="cap">Three things are read off the resulting 300 paths. The <b>revenue range</b> chart takes, for every month, the 10th, 50th and 90th percentile revenue across all 300 runs — so the band is how wide revenue could plausibly be in that month, not a forecast of any single path. The <b>variability</b> chart runs the simulation twice more, once with only the funnel channel switched on and once with only book and market switched on, and compares how much each one alone moves annual revenue, to show which channel is driving more of the swing in a given year. The <b>investor-return</b> chart takes the exit MOIC from each of the 300 runs (including whichever gap-day losses that run happened to draw) and plots the distribution, which is also where the "falls below the capital floor" and "below money back" statistics come from — figures the single base-case P&amp;L cannot show, because it has no variation to be at risk from.</p>
+    <p class="cap">The shock sizes and persistence themselves are fixed internal assumptions rather than sliders (see Limits of this draft for why), listed here for transparency:</p>
     <div class="tw"><table>
       <thead><tr><th>Channel</th><th>What it swings</th><th>Size, a typical month</th><th>Month-to-month persistence</th></tr></thead>
       <tbody>
