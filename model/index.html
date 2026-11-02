@@ -225,6 +225,20 @@ a{color:var(--funnel)}.toInputs{display:none}
       </ul>
     </div>
   </section>
+  <section class="card">
+    <h2>Fixed shock assumptions</h2>
+    <p class="cap">These drive the Monte Carlo simulation behind the revenue range, variability and investor-return charts. They are no longer adjustable from the rail (see Limits of this draft); listed here for transparency.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Channel</th><th>What it swings</th><th>Size, a typical month</th><th>Month-to-month persistence</th></tr></thead>
+      <tbody>
+        <tr><td>Book and market</td><td>Trading activity</td><td>20%</td><td>0.80</td></tr>
+        <tr><td>Book and market</td><td>B-book result</td><td>20%</td><td>0.80</td></tr>
+        <tr><td>Funnel</td><td>New clients</td><td>20%</td><td>0.90</td></tr>
+        <tr><td>Funnel</td><td>Churn</td><td>20%</td><td>0.90</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap" style="margin-top:8px">Persistence is how much of one month's shock carries into the next (0 would be pure noise, 1 would be a permanent shift) — set higher for the funnel than for book and market, since a marketing or churn problem tends to take longer to resolve than a single volatile trading month. Gap-day risk (chance of a gap day, loss per client) is separate from this table and still has its own sliders in the Book and market group.</p>
+  </section>
 </main>
 </div>
 
