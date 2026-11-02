@@ -110,13 +110,13 @@ a{color:var(--funnel)}.toInputs{display:none}
 <div class="shell">
 <aside class="rail" id="rail">
   <h2>Inputs</h2>
-  <p class="sub" style="font-size:12px">Each input names its source: the Constellation deck, a listed peer, or my assumption. Assumptions are yours to overrule.</p>
+  <p class="sub" style="font-size:12px">Each input names its source: the Constellation deck, a listed peer, feedback from a CFD brokerage CEO who reviewed this model, or my assumption. Assumptions are yours to overrule.</p>
   <div id="controls"></div>
 </aside>
 <main class="main">
   <header>
     <h1>CFD Broker Flight Deck</h1>
-    <p class="sub">A five-year model of a CFD broker. Clients are tracked month by month from the month they joined, so today's client base depends on how many you acquired a client's lifetime ago. First draft. Illustrative, not a forecast.</p><a class="toInputs" href="#rail">Go to inputs</a>
+    <p class="sub">A five-year model of a CFD broker. Clients are tracked month by month from the month they joined, so today's client base depends on how many you acquired a client's lifetime ago. All figures are in USD. Revised with feedback from a CFD brokerage CEO who reviewed the first draft. Illustrative, not a forecast.</p><a class="toInputs" href="#rail">Go to inputs</a>
   </header>
   <div class="flow" aria-label="How the model fits together">
     <b class="f">new clients</b>×<b class="f">survival</b>=<b class="f">active clients</b>×<b class="k">trades</b>×<b class="k">revenue per trade</b>×<b class="k">volatility</b>=<b>customer income</b>→<b class="k">A/B book</b>→<b>revenue</b>→<b>costs</b>→<b>EBITDA</b>→<b>return</b>
@@ -127,7 +127,7 @@ a{color:var(--funnel)}.toInputs{display:none}
   <div class="grid2">
     <section class="card">
       <h2>Who is still here: active clients by year of joining</h2>
-      <p class="cap">Hover a month to see how many clients remain from each year. The dashed line is new clients a month × average life, the level the base drifts towards.</p>
+      <p class="cap">Hover a month to see how many clients remain from each year. New clients a month are now derived from the marketing budget and CAC sliders, so this level can drift up or down as those change.</p>
       <div class="legend" id="lgStack"></div>
       <div class="chart" id="chStack"></div>
     </section>
@@ -180,14 +180,15 @@ a{color:var(--funnel)}.toInputs{display:none}
       <thead><tr><th>Broker</th><th>Period</th><th>Active clients</th><th>Revenue</th><th>Per-client figure</th></tr></thead>
       <tbody>
         <tr><td>XTB</td><td>FY2020→FY2025</td><td>Grew about 24×</td><td>+16% in FY2025 alone</td><td>Revenue per client fell 76% (PLN 7,400→1,800)</td></tr>
-        <tr><td>XTB</td><td>FY2025</td><td>1.19m active, 864k new</td><td>€506.7m</td><td>CAC ≈ PLN 700 (≈£130); revenue:CAC fell from 9.3× (2020) to 2.6× (2025)</td></tr>
+        <tr><td>XTB</td><td>FY2025</td><td>1.19m active, 864k new</td><td>€506.7m</td><td>CAC ≈ PLN 700 (≈$178); revenue:CAC fell from 9.3× (2020) to 2.6× (2025)</td></tr>
         <tr><td>CMC Markets</td><td>Q1 FY2022</td><td>Up about a third vs. pre-pandemic</td><td>—</td><td>Retained 80% of client income (its target)</td></tr>
         <tr><td>CMC Markets</td><td>FY2021 → FY2022 guide</td><td>—</td><td>£409.8m → guided &gt;£330m</td><td>Net operating income fell by a quarter year on year</td></tr>
         <tr><td>IG Group</td><td>Q1 FY2025</td><td>263,200, down 1% YoY</td><td>£278.9m, +15% YoY</td><td>≈£1,060 revenue per client per quarter (my estimate, not reported) ≈ £4,240 a year</td></tr>
       </tbody>
     </table></div>
-    <p class="cap" style="margin-top:8px"><b>What this changes in the model.</b> XTB is the clearest warning for the "buy growth" lever: as its client base grew 24-fold, revenue per active client collapsed, not just acquisition cost. I've added a new slider for that effect. Its default of 20% is well under the 76% XTB saw, because that figure also reflects six years of product mix shift (XTB added stocks, ETPs and lower-margin instruments), not acquisition speed alone.</p>
-    <p class="cap"><b>What this doesn't settle.</b> CMC's 80% "client income retained" is a different metric to this model's A-book cost or B-book result sliders, and one data point from 2022 is not a trend, so I haven't used it to move either. IG's revenue-per-client figure is my own division of two reported totals, not a number IG publishes, and its one-year comparison doesn't show whether a 28-month average client life is too short or too long for a more institutional client base. A true comparison would need each broker's own cohort or tenure data, which none of these disclosures give.</p>
+    <p class="cap" style="margin-top:8px"><b>On currencies.</b> This model runs in USD throughout; where the Constellation deck's own figures (opex, raise, licence fees) are in GBP, I've converted them at today's rate of about $1.34. The peer figures in this table are left in each broker's own reporting currency — Plus500 and XTB's CAC in USD, CMC and IG in GBP, XTB's broader results in EUR or PLN — rather than converted, so as not to misrepresent sourced data; they inform the model's defaults as ratios and trends, not as absolute dollar figures.</p>
+    <p class="cap"><b>What this changes in the model.</b> XTB is the clearest warning for the "buy growth" lever: as its client base grew 24-fold, revenue per active client collapsed, not just acquisition cost. There's a slider for that effect, now set to the CEO's benchmark of 12%, well under the 76% XTB saw, because that figure also reflects six years of product mix shift (XTB added stocks, ETPs and lower-margin instruments), not acquisition speed alone — XTB remains useful as an upper bound, not as the primary source.</p>
+    <p class="cap"><b>What this doesn't settle.</b> CMC's 80% "client income retained" is a different metric to this model's A-book cost or B-book result sliders, and one data point from 2022 is not a trend, so I haven't used it to move either. IG's revenue-per-client figure is my own division of two reported totals, not a number IG publishes, and its one-year comparison doesn't show whether a 36-month average client life is too short or too long for a more institutional client base. Most of the funnel and book defaults in this draft are now sourced to a CEO's review rather than to these peers, with the peer data kept as corroborating evidence, not the primary source.</p>
     <p class="cap">Sources: <a href="https://ir.xtb.com/en/xtb-ends-2025-with-a-record-of-eur-506-7-mm-operating-income-and-2-16-mm-clients/">XTB FY2025 results</a>, <a href="https://datalab.financemagnates.com/market-insights/xtb-at-pln-2-15-billion-revenue-rose-9x-in-six-years-while-profitability-per-client-fell-76">XTB per-client trend, 2019–2025</a>, <a href="https://www.financemagnates.com/forex/brokers/cmc-markets-retains-over-80-client-income-in-q1-fy22/amp">CMC Markets Q1 FY2022</a>, <a href="https://www.financemagnates.com/forex/ig-group-ends-q1-fy25-with-15-revenue-jump-revenue-per-client-rises">IG Group Q1 FY2025</a>.</p>
   </section>
   <section class="notes">
@@ -212,8 +213,11 @@ a{color:var(--funnel)}.toInputs{display:none}
       <ul>
         <li>One blended client. No client tiers, regions or IB-introduced clients as separate groups.</li>
         <li>Shock sizes are my assumptions, not fitted to a real broker's history. Book data from a target would replace them.</li>
-        <li>Average life of 28 months is Plus500's FY2025 active clients ÷ new clients (242,000 ÷ 104,500). Its Q1 2025 figures give about 15 months. None of XTB, CMC or IG publish a cohort table either, so this stays an estimate.</li>
-        <li>The new ARPU-decline-on-growth slider is calibrated to one broker's six-year trend, which bundles acquisition pace with product mix change. Treat it as illustrative, not fitted.</li>
+        <li>The 36-month average life, the 50%-churned-within-a-year base case, the 30% A-book share, the 25% A-book cost and the 3% float yield are all the reviewing CEO's own benchmarks for a brokerage like this, not drawn from a listed peer's disclosure. They are one practitioner's judgement, not an audited figure.</li>
+        <li>New clients a month are now derived from a marketing budget (a share of the previous month's revenue) and a cost-to-acquire figure, rather than typed in directly. That closed-form relationship is my own construction to match the CEO's framing, not something any of the cited brokers disclose directly.</li>
+        <li>Client cash balances (the float) that interest income is earned on are an assumption, bracketed by Plus500's disclosed range, since no broker publishes this for a target like Constellation's.</li>
+        <li>The "size of the shocks" section was consolidated from six sliders to four at the CEO's request, so the activity swing and the B-book result swing (and, separately, the new-client swing and the churn swing) now move together rather than independently.</li>
+        <li>The ARPU-decline-on-growth slider's default is the CEO's benchmark; XTB's six-year trend, which bundles acquisition pace with product-mix change, is kept only as an upper-bound reference.</li>
         <li>Exit multiple and purchase price are placeholders, because the deck gives neither.</li>
         <li>The management revenue share starts at 0% because the deck gives no rate. Move the slider to see what it costs.</li>
         <li>Single currency and one acquisition. The second deal the roadmap expects in year two is not modelled.</li>
@@ -225,7 +229,7 @@ a{color:var(--funnel)}.toInputs{display:none}
 </div>
 
 <script id="engine">
-/* Engine: pure functions, no DOM. Money in £, time in months. */
+/* Engine: pure functions, no DOM. Money in $, time in months. */
 const ENG=(()=>{
   const T=60,AMAX=1200,PATHS=300,F=5;
   const lanczos=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
@@ -250,6 +254,7 @@ const ENG=(()=>{
     const ref=Math.max(1,p.N0/p.L),eta=Math.log2(1+p.cacEl/100),etaA=Math.log2(1+(p.arpuEl||0)/100),vp=p.varPct/100,lk=p.leak/100,lic=p.lic*1e6/12,ph=p.opexVar/100;
     const n=path.n||(path.n=new Float64Array(T));n.fill(0);
     let b=p.N0,x=0,y=0,cc=0,cash=(p.raise-p.price)*1e6,minCash=cash,prevN=p.N0,yE=0,yRev=0,yEx=0,lastEx=0;
+    let prevRev=p.trades*p.rpt*p.volReg*p.N0;
     for(let t=0;t<T;t++){
       if(Z){const o=i*T*F+t*F;
         if(bk)x=phiA*x+qa*sa*Z[o];
@@ -258,13 +263,15 @@ const ENG=(()=>{
       const m=fn&&Z?Math.exp(cc-sc*sc/2):1,pr=prog(t,p.trans);
       b*=1-Math.min(1,c.h0[t]*m);if(t>0){for(let w=0;w<t;w++)n[w]*=1-Math.min(1,c.h[t-1-w]*m)}
       if(t===p.migM&&p.mig>0){const f=1-p.mig/100;b*=f;for(let w=0;w<t;w++)n[w]*=f}
-      const nomAdds=p.adds*(1+p.addsChg/100*pr),adds=nomAdds*(fn&&Z?Math.exp(y-sy*sy/2):1);
+      const baseCac=p.cac*(1+p.addsChg/100*pr),budget=Math.max(0,p.mktPct/100*prevRev);
+      const nomAdds=baseCac>0?Math.pow(budget*Math.pow(ref,eta)/baseCac,1/(1+eta)):0;
+      const adds=nomAdds*(fn&&Z?Math.exp(y-sy*sy/2):1);
       n[t]=adds*c.S[0];
       let N=b,W=b*c.wb[t+1];for(let w=0;w<=t;w++){N+=n[w];W+=n[w]*c.Tn[t-w]}
       const A=v*(bk&&Z?Math.exp(x-sa*sa/2):1),eps=bk&&Z?se*Z[i*T*F+t*F+1]:0,e=mu-beta*(A-1)+eps;
       const rptMult=nomAdds>0?Math.pow(nomAdds/ref,-etaA):1;
-      const CI=W*p.trades*p.rpt*rptMult*A,hedge=CI*a*hc,bres=CI*(1-a)*e,intr=N*p.interest/12,rev=CI-hedge+bres+intr;
-      const cac=p.cac*(nomAdds>0?Math.pow(nomAdds/ref,eta):1),mkt=adds*cac;
+      const CI=W*p.trades*p.rpt*rptMult*A,hedge=CI*a*hc,bres=CI*(1-a)*e,intr=N*p.floatBal*p.yieldPct/100/12,rev=CI-hedge+bres+intr;
+      const mkt=budget;
       const opex=(p.opex0+(p.opex1-p.opex0)*pr)*1e6/12*((1-ph)+ph*N/10000);
       const vr=Math.max(rev,0)*vp,lkg=Math.max(rev,0)*lk,one=p.trans>0?(t<p.trans?p.oneoff*1e6/p.trans:0):(t===0?p.oneoff*1e6:0);
       const ex=rev-vr-lkg-opex-mkt-lic,eb=ex-one;
@@ -274,7 +281,7 @@ const ENG=(()=>{
       if(cash<minCash)minCash=cash;
       if(out&&out.rm)out.rm[t]=rev;
       if(rec){rec.N[t]=N;rec.book[t]=b;let s=[0,0,0,0,0];for(let w=0;w<=t;w++)s[Math.floor(w/12)]+=n[w];rec.vint[t]=s;rec.CI[t]=CI;rec.hedge[t]=hedge;rec.bres[t]=bres;rec.intr[t]=intr;rec.rev[t]=rev;rec.vr[t]=vr+lkg;rec.opex[t]=opex;rec.mkt[t]=mkt;rec.lic[t]=lic;rec.one[t]=one;rec.eb[t]=eb;rec.ex[t]=ex;rec.adds[t]=adds;rec.lost[t]=prevN+adds-N;rec.cash[t]=cash}
-      prevN=N;
+      prevN=N;prevRev=rev;
     }
     const fund=Math.max(0,-minCash),ev=Math.max(0,lastEx)*p.multiple,val=Math.max(0,ev+cash+fund),inv=p.raise*1e6+fund;
     if(out){out.moic=val/inv;out.minCash=minCash}
@@ -287,7 +294,7 @@ const ENG=(()=>{
   }
   function unit(p,c){
     const a=p.aShare/100,v=p.volReg,net=1-p.varPct/100-p.leak/100;
-    const m=(p.trades*p.rpt*v*((1-a*p.aCost/100)+(1-a)*(p.edge/100-p.beta/100*(v-1)))+p.interest/12)*net;
+    const m=(p.trades*p.rpt*v*((1-a*p.aCost/100)+(1-a)*(p.edge/100-p.beta/100*(v-1)))+p.floatBal*p.yieldPct/100/12)*net;
     let ltv=0,cum=0,pay=null;
     for(let t=0;t<120;t++){const cf=m*c.S[t]*c.Tn[t];ltv+=cf/Math.pow(1.12,t/12);cum+=cf;if(pay===null&&cum>=p.cac)pay=t+1}
     return{m,ltv,pay,arpu:p.trades*p.rpt*v*12};
@@ -315,83 +322,84 @@ if(typeof module!=="undefined")module.exports=ENG;
 </script>
 
 <script>
-const DEF={N0:10000,adds:357,L:28,k:.7,tenure:15,cac:800,cacEl:15,arpuEl:20,mig:0,migM:18,addsChg:0,
-  trades:20,rpt:6.5,aShare:30,aCost:40,edge:8,volReg:1,beta:30,interest:100,
-  sa:20,se:20,sadds:25,schurn:20,gapP:10,gap:500,
-  opex0:8.7,opex1:5,trans:24,opexVar:30,varPct:20,lic:.6,oneoff:5,leak:0,
-  raise:25,price:14,floor:4,multiple:8,tax:9};
+const DEF={N0:17500,L:36,k:.59,tenure:20,cac:900,cacEl:25,arpuEl:12,mktPct:15,mig:0,migM:18,addsChg:0,
+  trades:20,rpt:8.70,aShare:30,aCost:25,edge:8,volReg:1,beta:30,floatBal:4000,yieldPct:3,
+  sa:20,se:20,sadds:20,schurn:20,gapP:10,gap:670,
+  opex0:11.7,opex1:6.7,trans:24,opexVar:30,varPct:20,lic:.8,oneoff:6.7,leak:0,
+  raise:33.5,price:18.8,floor:5.4,multiple:8,tax:9};
 const PRESETS=[
   {id:"pitched",name:"Constellation as pitched",set:{}},
-  {id:"stress",name:"Constellation stressed",set:{mig:20,addsChg:-30,cac:950,opex1:6}},
-  {id:"bought",name:"Target as bought",set:{opex1:8.7,oneoff:0,trans:24}},
-  {id:"scale",name:"Buy growth",set:{adds:800,cac:800}},
+  {id:"stress",name:"Constellation stressed",set:{mig:20,addsChg:30,cac:1100,opex1:9}},
+  {id:"bought",name:"Target as bought",set:{opex1:11.7,oneoff:0,trans:24}},
+  {id:"scale",name:"Buy growth",set:{mktPct:30,cac:700}},
   {id:"abook",name:"Mostly A-book",set:{aShare:80}}
 ];
-const money=x=>{const s=x<0?"−":"",a=Math.abs(x);return s+"£"+(a>=1e6?(a/1e6).toFixed(1)+"m":a>=1e4?Math.round(a/1e3)+"k":Math.round(a).toLocaleString("en-GB"))};
-const mm=x=>{const s=x<0?"−":"";return s+"£"+(Math.abs(x)/1e6).toFixed(1)+"m"};
-const num=x=>Math.round(x).toLocaleString("en-GB");
+const money=x=>{const s=x<0?"−":"",a=Math.abs(x);return s+"$"+(a>=1e6?(a/1e6).toFixed(1)+"m":a>=1e4?Math.round(a/1e3)+"k":Math.round(a).toLocaleString("en-US"))};
+const mm=x=>{const s=x<0?"−":"";return s+"$"+(Math.abs(x)/1e6).toFixed(1)+"m"};
+const num=x=>Math.round(x).toLocaleString("en-US");
 const pc=x=>x+"%";
 const CTRL=[
  {g:"Client funnel",c:"f",i:[
-  {k:"N0",l:"Clients at the start",min:1000,max:100000,st:500,f:num,s:"Deck p11",n:"The target has about 10,000 active funded clients."},
-  {k:"adds",l:"New clients a month",min:0,max:5000,st:1,f:num,s:"Assumption",n:"Set to hold 10,000 clients flat at a 28-month life."},
-  {k:"L",l:"Average client life (months)",min:3,max:120,st:1,f:x=>x,s:"Plus500",n:"FY2025 active ÷ new clients gives 28. Q1 2025 gives about 15."},
-  {k:"k",l:"Churn shape",min:.4,max:1.5,st:.05,f:x=>(+x).toFixed(2),s:"Assumption",n:"Below 1: heavy early losses and a loyal core. 1: constant churn."},
-  {k:"tenure",l:"Extra activity per year of tenure",min:0,max:40,st:1,f:pc,s:"Assumption",n:"Plus500 gets about half of OTC revenue from clients of 5+ years."},
-  {k:"cac",l:"Cost to acquire a client",min:100,max:3000,st:25,f:x=>"£"+num(x),s:"Assumption",n:"Plus500's latest is $1,230, about £970. XTB's blended CAC is roughly £140, but on a much lower-value, more diversified client base."},
-  {k:"cacEl",l:"Rise in CAC when new clients double",min:0,max:60,st:1,f:pc,s:"Assumption"},
-  {k:"arpuEl",l:"Fall in revenue per client when buying growth",min:0,max:60,st:1,f:pc,s:"XTB",n:"XTB's revenue per active client fell 76% as its base grew 24x, 2020–2025. That mixes years of product and mix change, so treat this as an upper bound, not a clean estimate."},
-  {k:"addsChg",l:"Change in new clients once agents run sales",min:-80,max:80,st:5,f:x=>(x>0?"+":"")+x+"%",s:"Assumption",n:"The deck moves sales from 25 people to 1 and gives no effect on new clients."},
-  {k:"mig",l:"Client loss on rebrand and platform move",min:0,max:50,st:1,f:pc,s:"Assumption",n:"The deck lists this risk but gives no size."},
-  {k:"migM",l:"Month of that loss",min:1,max:36,st:1,f:x=>x,s:"Roadmap",n:"Rebrand in year 1, external technology gone within 2 years."}
+  {k:"N0",l:"Clients at the start",min:2000,max:100000,st:500,f:num,s:"CEO estimate",n:"The number of active, funded clients the acquired broker starts with. The deck assumes about 10,000; our reviewing CEO put a realistic range for a broker like this at 15,000–20,000, so the default sits at the midpoint. Raising it lifts active clients, new clients needed to hold the base, and customer income roughly in proportion, and raises the cash needed for marketing since the budget below is set as a share of revenue."},
+  {k:"mktPct",l:"Marketing budget, share of revenue",min:0,max:50,st:1,f:pc,s:"CEO benchmark",n:"What the business spends on client acquisition each month, as a percentage of the previous month's revenue. Together with the cost to acquire a client below, this now sets how many new clients join each month — it is no longer typed in directly. Raising this slider raises new clients, active clients and revenue, but also raises marketing cost and, through the two elasticity sliders below, can raise the cost of each new client and lower what each one is worth."},
+  {k:"cac",l:"Cost to acquire a client",min:100,max:3000,st:25,f:x=>"$"+num(x),s:"CEO benchmark",n:"The cost to bring in one new client at a normal, replacement pace of acquisition. Combined with the marketing budget above, this sets how many clients join each month. Raising it means the same budget buys fewer new clients, lowering active clients and revenue, though also lowering marketing cost. For context, Plus500's latest disclosed figure is about $1,230; XTB's, on a much lower-value, more diversified client base, is about $178."},
+  {k:"L",l:"Average client life (months)",min:6,max:120,st:1,f:x=>x,s:"CEO benchmark",n:"How long, on average, a client stays before leaving. Our reviewing CEO put this at 36 months for a brokerage like this. Raising it raises active clients at any point (fewer leave each month), raises what a client is worth, and lowers the new clients needed each month just to hold the base steady."},
+  {k:"k",l:"Churn shape",min:.4,max:1.5,st:.05,f:x=>(+x).toFixed(2),s:"Solved from CEO inputs",n:"Shapes when, within that average life, clients tend to leave. Below 1, many leave early and a smaller loyal core stays for years; at 1, clients leave at a constant rate throughout their life. This value is solved so that, with a 36-month average life, half of a new group of clients has gone within 12 months — the CEO's stated base case. Lowering it front-loads losses even more, making a cohort's early months look worse but its survivors more valuable; raising it towards 1 spreads losses out evenly."},
+  {k:"tenure",l:"Extra activity per year of tenure",min:0,max:40,st:1,f:pc,s:"CEO benchmark",n:"How much more a client trades, and so how much more revenue they generate, for every year they have been with the broker, versus a brand-new client. The CEO described this as “over 20%” a year; 20% is used as a conservative read of that. Raising it makes long-tenured clients worth more relative to new ones, which raises client value and raises revenue in later years as the book matures, without changing how many clients you have."},
+  {k:"cacEl",l:"Rise in CAC when new clients double",min:0,max:60,st:1,f:pc,s:"CEO benchmark",n:"How much more expensive each extra client gets as you buy faster than the pace needed to simply replace leavers — buying twice as many clients a month costs this much more per client. The CEO put this at 25%. Raising it makes aggressive acquisition progressively more expensive, dampening how many new clients a bigger marketing budget actually buys, and lowers Year 5 EBITDA under a 'buy growth' strategy."},
+  {k:"arpuEl",l:"Fall in revenue per client when buying growth",min:0,max:60,st:1,f:pc,s:"CEO benchmark",n:"How much lower a new client's average revenue is when you are buying clients faster than the replacement pace, reflecting a bigger, faster-bought cohort tending to include lower-quality or lower-intent clients. The CEO put this at 12%. For comparison, XTB's revenue per active client fell 76% as its client base grew 24-fold over six years, though that also reflects years of product-mix change, so it is treated as an upper bound rather than a clean read. Raising this slider lowers revenue whenever the model is acquiring faster than the replacement rate, and so lowers the payoff from buying growth."},
+  {k:"addsChg",l:"Change in CAC once agents run acquisition",min:-80,max:80,st:5,f:x=>(x>0?"+":"")+x+"%",s:"Assumption",n:"Whether automating marketing and sales (the deck's move from 25 people to 1) makes each client cheaper or more expensive to acquire, phased in on the roadmap's own schedule. A negative value lowers the base cost to acquire a client as the transition proceeds, raising new clients and revenue for the same budget; a positive value raises it, the opposite. The deck gives no figure for this, so the default is 0%, no change."},
+  {k:"mig",l:"Client loss on rebrand and platform move",min:0,max:50,st:1,f:pc,s:"Assumption",n:"The share of clients who leave when the broker is rebranded and moved onto the new technology stack, applied as a one-off loss in the month set below. The deck lists this as a risk but gives no size, so the default is 0%. Raising it cuts active clients, and so revenue, by that share in that one month, and the loss compounds forward since those clients can no longer contribute to future cohorts."},
+  {k:"migM",l:"Month of that loss",min:1,max:36,st:1,f:x=>x,s:"Roadmap",n:"Which month the rebrand-related client loss above lands in, matched to the roadmap's year-one rebrand and two-year technology exit. Moving it earlier brings the one-off loss, and the dent in revenue and cash, forward in the charts; moving it later pushes both back."}
  ]},
  {g:"Book and market",c:"k",i:[
-  {k:"trades",l:"Trades per client a month",min:1,max:100,st:1,f:x=>x,s:"Assumption"},
-  {k:"rpt",l:"Average revenue per trade",min:1,max:40,st:.25,f:x=>"£"+(+x).toFixed(2),s:"Assumption",n:"Spread, overnight and fees. Set with trades so the target starts near breakeven."},
-  {k:"aShare",l:"Flow sent to the A-book",min:0,max:100,st:5,f:pc,s:"Assumption",n:"The deck asks for a hybrid book and gives no split."},
-  {k:"aCost",l:"A-book cost, share of income on hedged flow",min:0,max:80,st:5,f:pc,s:"Assumption"},
-  {k:"edge",l:"B-book result, share of income",min:-15,max:30,st:1,f:x=>(x>0?"+":"")+x+"%",s:"Plus500",n:"Ranged from −4% to +18% across the periods in the table below."},
-  {k:"volReg",l:"Market volatility: activity vs normal",min:.6,max:1.6,st:.05,f:x=>(+x).toFixed(2)+"×",s:"Assumption"},
-  {k:"beta",l:"Natural hedge: points of result lost per 100% more activity",min:0,max:60,st:5,f:x=>x,s:"Assumption",n:"Busy markets lift income and cut the book result."},
-  {k:"interest",l:"Interest on client money, per client a year",min:0,max:400,st:10,f:x=>"£"+x,s:"Plus500",n:"Interest was about 5% to 7% of Plus500's revenue in the half-years above."}
+  {k:"trades",l:"Trades per client a month",min:1,max:100,st:1,f:x=>x,s:"Assumption",n:"How many trades the average active client places each month. Together with revenue per trade below, this sets customer income before the A/B book split. Raising it raises customer income and revenue directly, with no effect on client numbers."},
+  {k:"rpt",l:"Average revenue per trade",min:1,max:54,st:.25,f:x=>"$"+(+x).toFixed(2),s:"Assumption",n:"The average spread, overnight financing and fee income the broker earns per trade, in USD. Set, together with trades, so the target starts close to breakeven at the costs below. Raising it raises customer income and revenue directly, with no effect on client numbers."},
+  {k:"aShare",l:"Flow sent to the A-book",min:0,max:100,st:5,f:pc,s:"CEO benchmark",n:"The share of client trading flow the broker hedges out to the market (the A-book) rather than taking the other side itself (the B-book). The CEO confirmed 30% as the base case. Raising it lowers the A-book cost paid away but also lowers exposure to the B-book result below, dampening both the upside and the downside of the broker's own trading, and lowers gap-day losses since those only hit the B-booked share."},
+  {k:"aCost",l:"A-book cost, share of income on hedged flow",min:0,max:80,st:5,f:pc,s:"CEO benchmark",n:"What it costs, as a share of the income on the hedged flow, to lay that risk off with a liquidity provider — the spread the broker gives up to pass the risk on. The CEO put this at 25%. Raising it lowers revenue on the A-booked share only, with no effect on the B-book result."},
+  {k:"edge",l:"B-book result, share of income",min:-15,max:30,st:1,f:x=>(x>0?"+":"")+x+"%",s:"Plus500",n:"The broker's own trading result on the B-booked flow, as a share of the income on that flow — positive if clients lose more than they win against the house, negative if they win more. No CEO figure was given for this; Plus500's own result ranged from about −4% to +18% of customer income across the periods in the evidence table below. Raising it raises the B-book result, and so revenue and EBITDA, on the share of flow not sent to the A-book."},
+  {k:"volReg",l:"Market volatility: activity vs normal",min:.6,max:1.6,st:.05,f:x=>(+x).toFixed(2)+"×",s:"Assumption",n:"A multiplier on trading activity and client exposure versus a normal month — above 1 in a busy, volatile market, below 1 in a quiet one. Raising it raises customer income (more trades, more exposure), but through the natural hedge below also pulls the B-book result down, since busy markets are typically worse for the house."},
+  {k:"beta",l:"Natural hedge: points of result lost per 100% more activity",min:0,max:60,st:5,f:x=>x,s:"Assumption",n:"How many percentage points the B-book result falls for every 100% rise in market volatility above normal — the mechanism by which a busy month that lifts customer income also squeezes the broker's own trading result. Raising it strengthens that offset, so revenue in busy and quiet months ends up closer than customer income alone would suggest."},
+  {k:"floatBal",l:"Average client cash balance (the float)",min:0,max:20000,st:100,f:x=>"$"+num(x),s:"Assumption",n:"The average cash each active client keeps on account, which the broker can earn interest on while it sits there. Plus500 has disclosed figures from about $5,250 to $14,700 across recent periods; a newer, mid-range broker's clients likely hold less, so the default is set lower. Raising it raises interest income, and so revenue, in direct proportion, with no effect on trading-related income."},
+  {k:"yieldPct",l:"Yield earned on that float",min:0,max:8,st:.25,f:pc,s:"CEO benchmark",n:"The annual interest rate the broker actually earns on client cash balances, net of what, if anything, it passes back to clients. Our reviewing CEO put the realistic ceiling at about 3% a year, flagging that a flat dollar-per-client figure was the wrong way to model this; the achievable rate depends on the currency and jurisdiction the float sits in and on prevailing short-term rates, so this is a base case, not a guarantee. Raising it raises interest income in direct proportion to the float balance above."}
  ]},
  {g:"Size of the shocks",c:"c",i:[
-  {k:"sa",l:"Market activity swings",min:0,max:60,st:1,f:pc,s:"Assumption"},
-  {k:"se",l:"Monthly B-book result swings",min:0,max:60,st:1,f:pc,s:"Plus500",n:"Scaled from the quarterly range in the table below."},
-  {k:"sadds",l:"New client swings",min:0,max:80,st:1,f:pc,s:"Assumption"},
-  {k:"schurn",l:"Churn swings",min:0,max:80,st:1,f:pc,s:"Assumption"},
-  {k:"gapP",l:"Chance of a gap day each year",min:0,max:40,st:1,f:pc,s:"Assumption"},
-  {k:"gap",l:"Gap loss per B-booked client",min:0,max:3000,st:50,f:x=>"£"+num(x),s:"Assumption",n:"Negative balance protection means the house takes this. Reduces cash, not revenue."}
+  {ks:["sa","se"],l:"Book and market swings, a typical month",min:0,max:60,st:1,f:pc,s:"Plus500, simplified",n:"How much the broker's trading activity and B-book result can swing from month to month, driving the simulated revenue paths and the variability chart below. This one slider now moves both the activity swing and the B-book result swing together — the CEO felt the earlier, separate version was more granular than this study needs. Raising it widens the range of simulated outcomes and raises book and market's share of year-by-year variability."},
+  {ks:["sadds","schurn"],l:"Funnel swings, a typical month (new clients and churn)",min:0,max:80,st:1,f:pc,s:"Assumption, simplified",n:"How much new client numbers and the monthly churn rate can swing from month to month, on the funnel side of the business. This one slider now moves both together, again to keep the number of controls manageable. Raising it widens the simulated range of client numbers and revenue over time, and raises the funnel's share of year-by-year variability, which tends to dominate by Year 5 even when book and market swings are left unchanged."},
+  {k:"gapP",l:"Chance of a gap day each year",min:0,max:40,st:1,f:pc,s:"Assumption",n:"How often, in a typical year, a sudden market gap pushes losses through client stop levels. Raising it raises how often the simulated paths take a gap-day hit, widening the downside tail of the investor-return distribution without changing the base case."},
+  {k:"gap",l:"Gap loss per B-booked client",min:0,max:4000,st:50,f:x=>"$"+num(x),s:"Assumption",n:"The loss per B-booked client the broker absorbs on a market gap — a sudden move through client stop levels, as happened industry-wide in the 2015 Swiss franc shock. Negative balance protection means the house, not the client, carries this. Raising it raises the simulated chance of a large cash hit in a given year, without changing the base-case P&L, since gap losses only show up in the simulated paths."}
  ]},
  {g:"Costs",c:"c",i:[
-  {k:"opex0",l:"Operating cost today (per 10,000 clients)",min:2,max:15,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p10"},
-  {k:"opex1",l:"Operating cost after transition",min:2,max:15,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p10"},
-  {k:"trans",l:"Transition length (months)",min:0,max:48,st:1,f:x=>x,s:"Roadmap",n:"Savings follow the roadmap's headcount path, scaled to this length."},
-  {k:"opexVar",l:"Share of operating cost that scales with clients",min:0,max:100,st:5,f:pc,s:"Assumption"},
-  {k:"varPct",l:"Liquidity, payments, IBs (share of revenue)",min:0,max:50,st:1,f:pc,s:"Assumption",n:"The deck excludes these from its cost table."},
-  {k:"lic",l:"Licence and regulatory fees a year",min:0,max:3,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption"},
-  {k:"oneoff",l:"One-off build and restructuring",min:0,max:15,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p16",n:"The deck's team and technology tranche."},
-  {k:"leak",l:"Management revenue share",min:0,max:15,st:.5,f:pc,s:"Deck, no rate",n:"The deck says management earns one and gives no percentage."}
+  {k:"opex0",l:"Operating cost today (per 17,500 clients)",min:3,max:20,st:.1,f:x=>"$"+(+x).toFixed(1)+"m",s:"Deck p10",n:"The acquired broker's own operating cost before any changes, converted from the deck's £8.7m at today's GBP/USD rate of about 1.34. Raising it raises costs from day one and, since costs run down to the end-state figure below on the roadmap's own schedule, raises costs throughout the transition."},
+  {k:"opex1",l:"Operating cost after transition",min:3,max:20,st:.1,f:x=>"$"+(+x).toFixed(1)+"m",s:"Deck p10",n:"The target operating cost once the transition to the Constellation model is complete, converted from the deck's £5.0m. Raising it raises steady-state costs and lowers Year 5 EBITDA and the investor return."},
+  {k:"trans",l:"Transition length (months)",min:0,max:48,st:1,f:x=>x,s:"Roadmap",n:"How many months the move from today's cost base to the end-state cost base takes, following the roadmap's own headcount path. Raising it stretches the cost savings out, raising costs (and lowering EBITDA) in the middle years while leaving the eventual end state unchanged."},
+  {k:"opexVar",l:"Share of operating cost that scales with clients",min:0,max:100,st:5,f:pc,s:"Assumption",n:"How much of operating cost moves with the number of active clients, versus staying fixed regardless of scale. Raising it means a bigger or smaller client base has a bigger effect on costs, amplifying the cost impact of the acquisition and churn sliders above."},
+  {k:"varPct",l:"Liquidity, payments, IBs (share of revenue)",min:0,max:50,st:1,f:pc,s:"Assumption",n:"Costs that scale directly with revenue — liquidity provision, payment processing, introducing-broker commissions — which the deck excludes from its own cost table. Raising it lowers EBITDA in direct proportion to revenue, in every scenario."},
+  {k:"lic",l:"Licence and regulatory fees a year",min:0,max:4,st:.1,f:x=>"$"+(+x).toFixed(1)+"m",s:"Assumption",n:"Licence and regulatory fees, converted from the deck's £0.6m a year; the deck excludes this from its own cost table. Raising it raises fixed costs every year, regardless of client numbers."},
+  {k:"oneoff",l:"One-off build and restructuring",min:0,max:20,st:.5,f:x=>"$"+(+x).toFixed(1)+"m",s:"Deck p16",n:"The deck's team-and-technology raise tranche, converted from about £5m, spent down over the transition period above as a one-off cost on top of ongoing opex. Raising it raises cash spent during the transition and lowers the EBITDA line shown in the P&L table during those years."},
+  {k:"leak",l:"Management revenue share",min:0,max:15,st:.5,f:pc,s:"Deck, no rate",n:"Revenue paid away to management as an incentive, separate from salaries already counted in operating cost. The deck says management earns a revenue share but gives no rate, so the default is 0%. Raising it lowers revenue available for everything below it — costs, EBITDA and ultimately the investor return — in direct proportion to revenue."}
  ]},
  {g:"Deal and exit",c:"c",i:[
-  {k:"raise",l:"Equity raised",min:5,max:100,st:1,f:x=>"£"+x+"m",s:"Deck p16"},
-  {k:"price",l:"Price and deal costs",min:0,max:60,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption",n:"The deck caps price, capital and costs at about £20m."},
-  {k:"floor",l:"Capital that must stay in the business",min:0,max:20,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption"},
-  {k:"multiple",l:"Exit multiple of EBITDA",min:2,max:20,st:.5,f:x=>(+x).toFixed(1)+"×",s:"Assumption"},
-  {k:"tax",l:"Tax on profit",min:0,max:30,st:1,f:pc,s:"UAE headline"}
+  {k:"raise",l:"Equity raised",min:7,max:135,st:1,f:x=>"$"+x+"m",s:"Deck p16",n:"The total equity raised, converted from the deck's £25m. This funds the cash balance the model starts with, net of the price below. Raising it raises how much cash the business has on hand, and so how far it can go before breaching the capital floor, and raises the money invested the exit return is measured against."},
+  {k:"price",l:"Price and deal costs",min:0,max:80,st:.5,f:x=>"$"+(+x).toFixed(1)+"m",s:"Assumption",n:"Price and deal costs paid at completion, an assumption since the deck gives no figure, only a cap of about £20m ($26.8m) on price, capital and costs combined. Raising it lowers the cash left over after completion, directly lowering the cushion against the capital floor and gap-day losses."},
+  {k:"floor",l:"Capital that must stay in the business",min:0,max:27,st:.5,f:x=>"$"+(+x).toFixed(1)+"m",s:"Assumption",n:"The minimum cash balance the business is assumed to need to keep operating. Raising it makes the 'falls below the capital floor' figure on the investor-return chart more sensitive to bad paths, without changing the base case."},
+  {k:"multiple",l:"Exit multiple of EBITDA",min:2,max:20,st:.5,f:x=>(+x).toFixed(1)+"×",s:"Assumption",n:"The multiple of Year 5 EBITDA, before the deal's one-off costs, the business is assumed to be worth on exit — an assumption, since the deck names a trade sale, IPO or merger as routes but gives no valuation. Raising it raises exit value and so the investor return, in direct proportion."},
+  {k:"tax",l:"Tax on profit",min:0,max:30,st:1,f:pc,s:"UAE headline",n:"Corporate tax on annual profit, applied at the UAE's headline rate. Raising it lowers cash retained each year-end, and so lowers the cash cushion against the capital floor."}
  ]}
 ];
 const COLR={f:"var(--funnel)",k:"var(--book)",c:"var(--deal)"};
 const $=s=>document.getElementById(s);
-const KEY="cfd-flight-deck-v1";
+const KEY="cfd-flight-deck-v2";
 let P={...DEF},activePreset="pitched",pin=null;
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.p){P={...DEF,...s.p};activePreset=s.a||null}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({p:P,a:activePreset}))}catch(e){}}
+function idOf(i){return i.ks?i.ks[0]:i.k}
+function keysOf(i){return i.ks||[i.k]}
 
-$("controls").innerHTML=CTRL.map(g=>`<fieldset><legend><i style="background:${COLR[g.c]}"></i>${g.g}</legend>`+g.i.map(i=>`<div class="ctl"><label for="c_${i.k}">${i.l}</label><output id="o_${i.k}" for="c_${i.k}"></output><input class="${g.c}" type="range" id="c_${i.k}" min="${i.min}" max="${i.max}" step="${i.st}"><small><span class="src">${i.s}.</span>${i.n?" "+i.n:""}</small></div>`).join("")+`</fieldset>`).join("");
+$("controls").innerHTML=CTRL.map(g=>`<fieldset><legend><i style="background:${COLR[g.c]}"></i>${g.g}</legend>`+g.i.map(i=>{const id=idOf(i);return `<div class="ctl"><label for="c_${id}">${i.l}</label><output id="o_${id}" for="c_${id}"></output><input class="${g.c}" type="range" id="c_${id}" min="${i.min}" max="${i.max}" step="${i.st}"><small><span class="src">${i.s}.</span>${i.n?" "+i.n:""}</small></div>`}).join("")+`</fieldset>`).join("");
 const ITEMS=CTRL.flatMap(g=>g.i);
-function syncCtl(){ITEMS.forEach(i=>{$("c_"+i.k).value=P[i.k];$("o_"+i.k).textContent=i.f(P[i.k])})}
-ITEMS.forEach(i=>$("c_"+i.k).addEventListener("input",e=>{P[i.k]=+e.target.value;$("o_"+i.k).textContent=i.f(P[i.k]);activePreset=null;$("rebalMsg").textContent="";schedule()}));
+function syncCtl(){ITEMS.forEach(i=>{const id=idOf(i);$("c_"+id).value=P[id];$("o_"+id).textContent=i.f(P[id])})}
+ITEMS.forEach(i=>{const id=idOf(i);$("c_"+id).addEventListener("input",e=>{const v=+e.target.value;keysOf(i).forEach(k=>P[k]=v);$("o_"+id).textContent=i.f(v);activePreset=null;$("rebalMsg").textContent="";schedule()})});
 $("presets").innerHTML=PRESETS.map(s=>`<button id="p_${s.id}" data-p="${s.id}">${s.name}</button>`).join("")+`<button id="pinBtn" style="margin-left:auto">Pin as baseline</button>`;
 $("presets").addEventListener("click",e=>{const id=e.target.dataset.p;if(id){P={...DEF,...PRESETS.find(s=>s.id===id).set};activePreset=id;$("rebalMsg").textContent="";syncCtl();schedule()}});
 $("pinBtn").addEventListener("click",()=>{if(pin){pin=null}else{pin=lastKpi}render()});
@@ -419,15 +427,14 @@ const crossLine=f=>`<line class="cross" y1="${f.m.t}" y2="${f.m.t+f.ih}" stroke=
 const mlabel=t=>`Month ${t+1} (Y${Math.floor(t/12)+1})`;
 
 function drawStack(B){
-  const el=$("chStack"),T=ENG.T,ss=(P.adds*(1+P.addsChg/100))*P.L;
+  const el=$("chStack"),T=ENG.T;
   const layers=[{n:"Acquired book",c:"var(--neutral)",v:t=>B.book[t]}].concat([0,1,2,3,4].map(i=>({n:"Joined Y"+(i+1),c:`var(--v${i+1})`,v:t=>B.vint[t][i]})));
-  $("lgStack").innerHTML=layers.map(l=>`<span><i style="background:${l.c}"></i>${l.n}</span>`).join("")+`<span><i class="dash"></i>Steady state ${num(ss)}</span>`;
-  const top=nice(Math.max(...B.N,ss)*1.02),f=frame(el,260,0,top,v=>v>=1000?(v/1000)+"k":v);
+  $("lgStack").innerHTML=layers.map(l=>`<span><i style="background:${l.c}"></i>${l.n}</span>`).join("");
+  const top=nice(Math.max(...B.N)*1.02),f=frame(el,260,0,top,v=>v>=1000?(v/1000)+"k":v);
   let base=new Float64Array(T),s="";
   layers.forEach(l=>{let up="",dn="";for(let t=0;t<T;t++){const y0=base[t],y1=y0+l.v(t);up+=`${f.X(t).toFixed(1)},${f.Y(y1).toFixed(1)} `;dn=`${f.X(t).toFixed(1)},${f.Y(y0).toFixed(1)} `+dn;base[t]=y1}
     s+=`<polygon points="${up}${dn}" fill="${l.c}" stroke="var(--panel)" stroke-width="1"/>`});
-  const yss=f.Y(ss);
-  el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Active clients by year of joining">${f.g}${s}<line x1="${f.m.l}" x2="${f.w-f.m.r}" y1="${yss}" y2="${yss}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
+  el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Active clients by year of joining">${f.g}${s}${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
   hover(el,f,t=>{let h=`<b>${mlabel(t)}</b>: ${num(B.N[t])} clients`;layers.forEach(l=>{const v=l.v(t);if(v>=.5)h+=`<br>${l.n}: ${num(v)}`});return h});
 }
 function drawSurv(B){
@@ -442,7 +449,7 @@ function drawSurv(B){
 function drawFan(B,M){
   const el=$("chFan"),T=ENG.T,cost=t=>(B.vr[t]+B.opex[t]+B.mkt[t]+B.lic[t]+B.one[t])*12;
   let mx=0;for(let t=0;t<T;t++)mx=Math.max(mx,M.q90[t],cost(t));
-  const f=frame(el,260,0,nice(mx*1.02),v=>"£"+Number((v/1e6).toFixed(2))+"m");
+  const f=frame(el,260,0,nice(mx*1.02),v=>"$"+Number((v/1e6).toFixed(2))+"m");
   let hi="",lo="",md="",co="";for(let t=0;t<T;t++){const x=f.X(t).toFixed(1);hi+=`${x},${f.Y(M.q90[t]).toFixed(1)} `;lo=`${x},${f.Y(M.q10[t]).toFixed(1)} `+lo;md+=`${x},${f.Y(M.q50[t]).toFixed(1)} `;co+=`${x},${f.Y(cost(t)).toFixed(1)} `}
   el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Revenue range and costs by month">${f.g}<polygon points="${hi}${lo}" fill="var(--funnel)" opacity=".2"/><polyline points="${md}" fill="none" stroke="var(--funnel)" stroke-width="2"/><polyline points="${co}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
   hover(el,f,t=>`<b>${mlabel(t)}</b><br>P90 ${mm(M.q90[t])}<br>Median ${mm(M.q50[t])}<br>P10 ${mm(M.q10[t])}<br>Costs ${mm(cost(t))}`);
@@ -453,7 +460,7 @@ function drawShares(M){
 }
 function drawTornado(B){
   const el=$("chTor"),ex=b=>{let s=0;for(let t=48;t<60;t++)s+=b.ex[t];return s},b0=ex(B);
-  const defs=[["adds","New clients a month","f"],["L","Average client life","f"],["cac","Cost to acquire a client","f"],["N0","Clients at the start","f"],["arpuEl","ARPU hit from buying growth","f"],["trades","Trades per client","k"],["rpt","Revenue per trade","k"],["volReg","Market volatility","k"],["opex1","End-state operating cost","c"],["varPct","Liquidity, payments, IBs","c"]];
+  const defs=[["mktPct","Marketing budget, share of revenue","f"],["L","Average client life","f"],["cac","Cost to acquire a client","f"],["N0","Clients at the start","f"],["arpuEl","ARPU hit from buying growth","f"],["trades","Trades per client","k"],["rpt","Revenue per trade","k"],["volReg","Market volatility","k"],["opex1","End-state operating cost","c"],["varPct","Liquidity, payments, IBs","c"]];
   const rows=defs.map(([k,l,g])=>{const lo=ex(ENG.base({...P,[k]:P[k]*.8})),hi=ex(ENG.base({...P,[k]:P[k]*1.2}));return{l,g,lo,hi}});
   rows.push({l:"B-book result ±4 pts",g:"k",lo:ex(ENG.base({...P,edge:P.edge-4})),hi:ex(ENG.base({...P,edge:P.edge+4}))});
   rows.push({l:"A-book share ±10 pts",g:"k",lo:ex(ENG.base({...P,aShare:Math.max(0,P.aShare-10)})),hi:ex(ENG.base({...P,aShare:Math.min(100,P.aShare+10)}))});
@@ -486,29 +493,31 @@ let lastKpi=null;
 function render(){
   const B=ENG.base(P),U=ENG.unit(P,B.c),M=ENG.mc(P);
   const sum=(a,f,t)=>{let s=0;for(let i=f;i<t;i++)s+=a[i];return s};
-  const rev5=sum(B.rev,48,60),eb5=sum(B.ex,48,60),ratio=U.ltv/P.cac,hold=P.N0/P.L,ss=P.adds*(1+P.addsChg/100)*P.L;
-  const k={arpu:U.arpu,ltv:U.ltv,ratio,pay:U.pay,ss,end:B.N[59],rev5,eb5,p50:M.p50,p3x:M.p3x,p1x:M.p1x,breach:M.pBreach};
+  const avg=(a,f,t)=>sum(a,f,t)/(t-f);
+  const rev5=sum(B.rev,48,60),eb5=sum(B.ex,48,60),ratio=U.ltv/P.cac,hold=P.N0/P.L,adds5=avg(B.adds,48,60);
+  const k={arpu:U.arpu,ltv:U.ltv,ratio,pay:U.pay,adds5,end:B.N[59],rev5,eb5,p50:M.p50,p3x:M.p3x,p1x:M.p1x,breach:M.pBreach};
   lastKpi=k;
   const dl=(key,fm)=>{if(!pin)return"";const d=k[key]-pin[key];if(d===0||!isFinite(d))return"no change vs baseline";return(d>0?"+":"−")+fm(Math.abs(d))+" vs baseline"};
   const rp=ratio>=3?`<span class="pill good">Healthy</span>`:ratio>=1.5?`<span class="pill warn">Thin</span>`:`<span class="pill bad">Loses money</span>`;
   const tiles=[
-   ["Customer income per client a year",money(U.arpu),dl("arpu",money)||`${P.trades} trades × £${(+P.rpt).toFixed(2)} × 12`],
+   ["Customer income per client a year",money(U.arpu),dl("arpu",money)||`${P.trades} trades × $${(+P.rpt).toFixed(2)} × 12`],
    ["Client value, after variable costs",money(U.ltv),dl("ltv",money)||"Over 10 years, discounted at 12%"],
    ["Client value ÷ CAC",ratio.toFixed(1)+"x",dl("ratio",x=>x.toFixed(1)+"x")||rp],
    ["CAC payback",U.pay?U.pay+" months":"Over 10 yrs",dl("pay",x=>Math.round(x)+"m")||"Allowing for clients who leave"],
-   ["Clients at end of Year 5",num(B.N[59]),dl("end",num)||`Long-run level ${num(ss)}`],
+   ["New clients a month, Year 5",num(adds5),dl("adds5",num)||`Replacement rate ${num(hold)}`],
    ["Year 5 revenue",mm(rev5),dl("rev5",mm)||"Base case"],
    ["Year 5 EBITDA",mm(eb5),dl("eb5",mm)||`Margin ${rev5?Math.round(eb5/rev5*100):0}%`],
    ["Median return",M.p50.toFixed(1)+"x",dl("p50",x=>x.toFixed(1)+"x")||`${Math.round(M.p3x*100)}% of paths reach 3x`]
   ];
   $("kpis").innerHTML=tiles.map(t=>`<div class="kpi"><div class="l">${t[0]}</div><div class="v">${t[1]}</div><div class="d">${t[2]}</div></div>`).join("");
-  const Y=M.years,trend=Math.round(Y[0].shareB*100),trendEnd=Math.round(Y[4].shareB*100),gap=P.adds*(1+P.addsChg/100)-hold;
-  const dir=Math.abs(gap)<hold*.02?"so the base holds near":gap>0?"so the base grows towards":"so the base shrinks towards";
+  const Y=M.years,trend=Math.round(Y[0].shareB*100),trendEnd=Math.round(Y[4].shareB*100);
+  const dirWord=Math.abs(adds5-hold)<hold*.03?"close to":adds5>hold?"above":"below";
+  const dirEffect=adds5>hold*1.03?"so the base is still growing":adds5<hold*.97?"so the base is still shrinking":"so the base is roughly steady";
   $("read").innerHTML=`<h2>The read on these inputs</h2>
-   <p><b>Funnel.</b> Holding ${num(P.N0)} clients at a ${P.L}-month life takes ${num(hold)} new clients a month. You are adding ${num(P.adds*(1+P.addsChg/100))} once the transition is done, ${dir} ${num(ss)}. Marketing costs ${mm(sum(B.mkt,48,60))} in Year 5.</p>
+   <p><b>Funnel.</b> Holding ${num(P.N0)} clients at a ${P.L}-month life takes ${num(hold)} new clients a month just to replace leavers. At a ${pc(P.mktPct)} marketing budget and a $${num(P.cac)} CAC, the model is buying about ${num(adds5)} new clients a month by Year 5, ${dirWord} that replacement rate, ${dirEffect}. Marketing costs ${mm(sum(B.mkt,48,60))} in Year 5, against revenue of ${mm(rev5)} that year.</p>
    <p><b>Unit economics.</b> A client is worth ${money(U.ltv)} against ${money(P.cac)} to acquire. ${ratio<1.5?"At that ratio, buying growth destroys value.":ratio<3?"Growth pays, with little room for error.":"Growth pays comfortably if CAC holds as you scale."}</p>
    <p><b>Variability.</b> Book and market explain ${trend}% of revenue variance in Year 1 and ${trendEnd}% by Year 5. ${trendEnd<trend?"A bad month reverses. A lost client stays lost, and funnel misses accumulate.":"Book and market shocks are outweighing funnel shocks across the horizon."}</p>
-   <p><b>Return.</b> Median ${M.p50.toFixed(1)}x on ${"£"+P.raise+"m"}. ${Math.round(M.p3x*100)}% of paths reach 3x and ${Math.round(M.p1x*100)}% lose money. Base-case exit value is ${mm(B.ev)} plus ${mm(B.exitCash)} cash.</p>`;
+   <p><b>Return.</b> Median ${M.p50.toFixed(1)}x on ${money(P.raise*1e6)}. ${Math.round(M.p3x*100)}% of paths reach 3x and ${Math.round(M.p1x*100)}% lose money. Base-case exit value is ${mm(B.ev)} plus ${mm(B.exitCash)} cash.</p>`;
   document.querySelectorAll("#presets [data-p]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===activePreset));
   $("pinBtn").textContent=pin?"Clear baseline":"Pin as baseline";$("pinBtn").setAttribute("aria-pressed",!!pin);
   drawStack(B);drawSurv(B);drawFan(B,M);drawShares(M);drawTornado(B);drawMoic(M);drawPnl(B);save();
