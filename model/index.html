@@ -143,6 +143,17 @@ a{color:var(--funnel)}.toInputs{display:none}
       <div class="chart" id="chFan"></div>
     </section>
     <section class="card">
+      <h2>Investor return after five years</h2>
+      <p class="cap">Exit value plus cash, divided by money invested. Includes gap-day losses. Any cash shortfall counts as extra money invested. <a href="#monteCarlo">How this simulation works ↓</a></p>
+      <div class="chart" id="chMoic"></div>
+    </section>
+    <section class="card">
+      <h2>What moves Year 5 EBITDA most</h2>
+      <p class="cap">Each input flexed on its own, base case. Ranges are ±20% unless the label says otherwise.</p>
+      <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel</span><span><i style="background:var(--book)"></i>Book and market</span><span><i style="background:var(--cost)"></i>Costs</span><span><i style="background:var(--deal)"></i>Deal and exit</span></div>
+      <div class="chart" id="chTor"></div>
+    </section>
+    <section class="card">
       <h2>What drives revenue variability, by year</h2>
       <p class="cap">Measured by running the funnel shocks alone, then the book and market shocks alone. The ± column is one standard deviation of annual revenue with both on. <a href="#monteCarlo">How this simulation works ↓</a></p>
       <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel: acquisition and churn</span><span><i style="background:var(--book)"></i>Book and market</span></div>
@@ -156,17 +167,6 @@ a{color:var(--funnel)}.toInputs{display:none}
         <button id="rebal">Rescale</button>
         <span id="rebalMsg" style="color:var(--muted)"></span>
       </div>
-    </section>
-    <section class="card">
-      <h2>What moves Year 5 EBITDA most</h2>
-      <p class="cap">Each input flexed on its own, base case. Ranges are ±20% unless the label says otherwise.</p>
-      <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel</span><span><i style="background:var(--book)"></i>Book and market</span><span><i style="background:var(--cost)"></i>Costs</span><span><i style="background:var(--deal)"></i>Deal and exit</span></div>
-      <div class="chart" id="chTor"></div>
-    </section>
-    <section class="card">
-      <h2>Investor return after five years</h2>
-      <p class="cap">Exit value plus cash, divided by money invested. Includes gap-day losses. Any cash shortfall counts as extra money invested. <a href="#monteCarlo">How this simulation works ↓</a></p>
-      <div class="chart" id="chMoic"></div>
     </section>
   </div>
   <section class="card">
@@ -462,8 +462,9 @@ function drawSurv(B){
 }
 function drawFan(B,M){
   const el=$("chFan"),T=ENG.T,cost=t=>(B.vr[t]+B.opex[t]+B.mkt[t]+B.lic[t]+B.one[t])*12;
-  let mx=0;for(let t=0;t<T;t++)mx=Math.max(mx,M.q90[t],cost(t));
-  const f=frame(el,260,0,nice(mx*1.02),v=>"$"+Number((v/1e6).toFixed(2))+"m");
+  let mn=Infinity,mx=0;for(let t=0;t<T;t++){mn=Math.min(mn,M.q10[t],cost(t));mx=Math.max(mx,M.q90[t],cost(t))}
+  const step=5e6,ymin=Math.max(0,Math.floor(mn*.95/step)*step),ymax=Math.ceil(mx*1.05/step)*step;
+  const f=frame(el,260,ymin,ymax,v=>"$"+Number((v/1e6).toFixed(2))+"m");
   let hi="",lo="",md="",co="";for(let t=0;t<T;t++){const x=f.X(t).toFixed(1);hi+=`${x},${f.Y(M.q90[t]).toFixed(1)} `;lo=`${x},${f.Y(M.q10[t]).toFixed(1)} `+lo;md+=`${x},${f.Y(M.q50[t]).toFixed(1)} `;co+=`${x},${f.Y(cost(t)).toFixed(1)} `}
   el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Revenue range and costs by month">${f.g}<polygon points="${hi}${lo}" fill="var(--funnel)" opacity=".2"/><polyline points="${md}" fill="none" stroke="var(--funnel)" stroke-width="2"/><polyline points="${co}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
   hover(el,f,t=>`<b>${mlabel(t)}</b><br>P90 ${mm(M.q90[t])}<br>Median ${mm(M.q50[t])}<br>P10 ${mm(M.q10[t])}<br>Costs ${mm(cost(t))}`);
