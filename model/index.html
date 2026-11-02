@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>CFD Broker Flight Deck</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fixed control rail on the left, the desk's read and charts on the right. Blue is always the funnel, orange is always the book. */
+:root{
+  --bg:#eef2f4;--panel:#fbfcfc;--ink:#14222c;--muted:#566874;--line:#d5dee3;--grid:#e4eaed;
+  --funnel:#1f6fb2;--book:#c8601f;--neutral:#8496a3;--deal:#3c5566;
+  --v1:#123f68;--v2:#1a5a94;--v3:#2f7cc0;--v4:#68a4d8;--v5:#a6cbea;
+  --good:#23704a;--warn:#946200;--bad:#ab3226;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;--body:"IBM Plex Sans","Segoe UI",Arial,sans-serif;--mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f171d;--panel:#162028;--ink:#e5edf1;--muted:#94a6b2;--line:#2b3a45;--grid:#22303a;
+  --funnel:#4f97d6;--book:#d67a38;--neutral:#71838f;--deal:#a9bdca;
+  --v1:#a6cbea;--v2:#68a4d8;--v3:#3f88c8;--v4:#2a6aa3;--v5:#1c4d7a;
+  --good:#62c48c;--warn:#dcae4f;--bad:#ef8176;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f171d;--panel:#162028;--ink:#e5edf1;--muted:#94a6b2;--line:#2b3a45;--grid:#22303a;
+  --funnel:#4f97d6;--book:#d67a38;--neutral:#71838f;--deal:#a9bdca;
+  --v1:#a6cbea;--v2:#68a4d8;--v3:#3f88c8;--v4:#2a6aa3;--v5:#1c4d7a;
+  --good:#62c48c;--warn:#dcae4f;--bad:#ef8176;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--body);font-variant-numeric:tabular-nums}
+.shell{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;align-items:start}
+.rail{position:sticky;top:env(safe-area-inset-top,0px);max-height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding-block:16px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px}
+.main{padding-block:20px 48px;padding-left:24px;padding-right:max(24px,env(safe-area-inset-right,0px));display:grid;gap:20px;min-width:0}
+h1{font:700 26px/1.1 var(--display);margin:0;text-wrap:balance}
+h2{font:700 15px/1.25 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:70ch}
+.flow{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font:12px/1.5 var(--mono);color:var(--muted)}
+.flow b{font-weight:500;padding:1px 6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.flow b.f{border-color:var(--funnel)}.flow b.k{border-color:var(--book)}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+button{font:500 13px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);padding:6px 10px;cursor:pointer;border-radius:3px}
+button:hover{border-color:var(--ink)}button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--funnel);outline-offset:2px}
+.read{background:var(--panel);border:1px solid var(--line);padding:14px 16px;display:grid;gap:6px}
+.read p{margin:0;max-width:92ch}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.kpi{background:var(--panel);padding:10px 12px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font:500 22px/1.25 var(--mono)}
+.kpi .d{font-size:12px;color:var(--muted);min-height:18px}
+.pill{font-size:11px;font-weight:600;letter-spacing:.02em;border:1px solid currentColor;padding:0 5px;border-radius:2px;white-space:nowrap}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{background:var(--panel);border:1px solid var(--line);padding:14px 16px;min-width:0}
+.card .cap{color:var(--muted);font-size:13px;margin:2px 0 8px;max-width:70ch}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;overflow:visible}
+.chart text{font:11px var(--mono);fill:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--panel);font:12px/1.45 var(--mono);padding:6px 8px;white-space:nowrap;z-index:5;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-bottom:6px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border-radius:2px}
+.legend i.dash{height:0;border-top:2px dashed var(--ink);background:none;border-radius:0;vertical-align:3px;width:14px}
+.legend i.ln{height:0;border-top:2px solid var(--funnel);background:none;border-radius:0;vertical-align:3px;width:14px}
+.shares{display:grid;gap:6px;grid-template-columns:28px minmax(0,1fr) 54px;align-items:center;font-size:12px}
+.shares .hd{color:var(--muted)}
+.bar{display:flex;gap:2px;height:22px;position:relative}
+.bar div{min-width:0;display:flex;align-items:center;padding:0 6px;color:#fff;font:500 11px var(--mono);overflow:hidden;white-space:nowrap}
+.bar .f{background:var(--funnel);border-radius:3px 0 0 3px}.bar .k{background:var(--book);border-radius:0 3px 3px 0;justify-content:flex-end}
+:root[data-theme="dark"] .bar div{color:#0f171d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bar div{color:#0f171d}}
+.rebal{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;font-size:13px}
+select{font:13px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);padding:5px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:4px 8px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap;font-family:var(--mono);font-weight:400}
+th:first-child,td:first-child{text-align:left;font-family:var(--body)}
+thead th{color:var(--muted);border-bottom:1px solid var(--line)}
+tr.tot td{font-weight:500;border-top:1px solid var(--line)}
+tr.sec td{color:var(--muted);font-size:12px;border-bottom:none;padding-top:8px;font-family:var(--body)}
+fieldset{border:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+legend{font:700 13px var(--display);padding:0 0 4px;display:flex;align-items:center;gap:6px}
+legend i{width:10px;height:10px;display:inline-block;border-radius:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 8px;align-items:baseline}
+.ctl label{font-size:13px}
+.ctl output{font:500 13px var(--mono)}
+.ctl input{grid-column:1/-1;width:100%;margin:2px 0;height:20px;cursor:pointer}
+.ctl input.f{accent-color:var(--funnel)}.ctl input.k{accent-color:var(--book)}.ctl input.c{accent-color:var(--deal)}
+.ctl small{grid-column:1/-1;color:var(--muted);font-size:11px;line-height:1.35}
+.src{font-weight:600}
+.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.notes ul{margin:6px 0 0;padding-left:18px}.notes li{margin-bottom:4px}
+a{color:var(--funnel)}.toInputs{display:none}
+@media (max-width:1180px){.grid2,.notes{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static;max-height:none;border-right:none;border-bottom:1px solid var(--line);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{order:-1}.toInputs{display:inline-block;margin-top:6px}
+}
+</style>
+
+<div class="shell">
+<aside class="rail" id="rail">
+  <h2>Inputs</h2>
+  <p class="sub" style="font-size:12px">Each input names its source: the Constellation deck, a listed peer, or my assumption. Assumptions are yours to overrule.</p>
+  <div id="controls"></div>
+</aside>
+<main class="main">
+  <header>
+    <h1>CFD Broker Flight Deck</h1>
+    <p class="sub">A five-year model of a CFD broker. Clients are tracked month by month from the month they joined, so today's client base depends on how many you acquired a client's lifetime ago. First draft. Illustrative, not a forecast.</p><a class="toInputs" href="#rail">Go to inputs</a>
+  </header>
+  <div class="flow" aria-label="How the model fits together">
+    <b class="f">new clients</b>×<b class="f">survival</b>=<b class="f">active clients</b>×<b class="k">trades</b>×<b class="k">revenue per trade</b>×<b class="k">volatility</b>=<b>customer income</b>→<b class="k">A/B book</b>→<b>revenue</b>→<b>costs</b>→<b>EBITDA</b>→<b>return</b>
+  </div>
+  <div class="presets" id="presets" role="group" aria-label="Scenarios"></div>
+  <section class="read" id="read" aria-live="polite"></section>
+  <section class="kpis" id="kpis"></section>
+  <div class="grid2">
+    <section class="card">
+      <h2>Who is still here: active clients by year of joining</h2>
+      <p class="cap">Hover a month to see how many clients remain from each year. The dashed line is new clients a month × average life, the level the base drifts towards.</p>
+      <div class="legend" id="lgStack"></div>
+      <div class="chart" id="chStack"></div>
+    </section>
+    <section class="card">
+      <h2>How a group of new clients decays</h2>
+      <p class="cap">Same average life, different shape. Lower shape values mean many clients leave early and a loyal core stays for years.</p>
+      <div class="chart" id="chSurv"></div>
+    </section>
+    <section class="card">
+      <h2>Revenue range against costs, annualised</h2>
+      <p class="cap">300 simulated paths with every shock switched on. Costs are the base case, including one-off build costs.</p>
+      <div class="legend"><span><i style="background:var(--funnel);opacity:.25"></i>P10 to P90 revenue</span><span><i class="ln"></i>Median revenue</span><span><i class="dash"></i>Base-case costs</span></div>
+      <div class="chart" id="chFan"></div>
+    </section>
+    <section class="card">
+      <h2>What drives revenue variability, by year</h2>
+      <p class="cap">Measured by running the funnel shocks alone, then the book and market shocks alone. The ± column is one standard deviation of annual revenue with both on.</p>
+      <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel: acquisition and churn</span><span><i style="background:var(--book)"></i>Book and market</span></div>
+      <div class="shares" id="shares"></div>
+      <div class="rebal">
+        <label for="tgtShare">Rescale book shocks to</label>
+        <select id="tgtShare"><option value=".3">30%</option><option value=".4">40%</option><option value=".5" selected>50%</option><option value=".6">60%</option><option value=".7">70%</option></select>
+        <label for="tgtYear">book share in</label>
+        <select id="tgtYear"><option value="0">Year 1</option><option value="1">Year 2</option><option value="2" selected>Year 3</option><option value="3">Year 4</option><option value="4">Year 5</option></select>
+        <button id="rebal">Rescale</button>
+        <span id="rebalMsg" style="color:var(--muted)"></span>
+      </div>
+    </section>
+    <section class="card">
+      <h2>What moves Year 5 EBITDA most</h2>
+      <p class="cap">Each input flexed on its own, base case. Ranges are ±20% unless the label says otherwise.</p>
+      <div class="legend"><span><i style="background:var(--funnel)"></i>Funnel</span><span><i style="background:var(--book)"></i>Book and market</span><span><i style="background:var(--deal)"></i>Costs</span></div>
+      <div class="chart" id="chTor"></div>
+    </section>
+    <section class="card">
+      <h2>Investor return after five years</h2>
+      <p class="cap">Exit value plus cash, divided by money invested. Includes gap-day losses. Any cash shortfall counts as extra money invested.</p>
+      <div class="chart" id="chMoic"></div>
+    </section>
+  </div>
+  <section class="card">
+    <h2>Base-case P&amp;L</h2>
+    <p class="cap">No random shocks and no gap day. This table is also the data behind the charts.</p>
+    <div class="tw" id="pnl"></div>
+  </section>
+  <section class="card">
+    <h2>Checking against three more listed brokers</h2>
+    <p class="cap">Plus500 alone sets most of this model's defaults. These three fill in different gaps. None of them report a cohort table, so the churn curve is still an estimate.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Broker</th><th>Period</th><th>Active clients</th><th>Revenue</th><th>Per-client figure</th></tr></thead>
+      <tbody>
+        <tr><td>XTB</td><td>FY2020→FY2025</td><td>Grew about 24×</td><td>+16% in FY2025 alone</td><td>Revenue per client fell 76% (PLN 7,400→1,800)</td></tr>
+        <tr><td>XTB</td><td>FY2025</td><td>1.19m active, 864k new</td><td>€506.7m</td><td>CAC ≈ PLN 700 (≈£130); revenue:CAC fell from 9.3× (2020) to 2.6× (2025)</td></tr>
+        <tr><td>CMC Markets</td><td>Q1 FY2022</td><td>Up about a third vs. pre-pandemic</td><td>—</td><td>Retained 80% of client income (its target)</td></tr>
+        <tr><td>CMC Markets</td><td>FY2021 → FY2022 guide</td><td>—</td><td>£409.8m → guided &gt;£330m</td><td>Net operating income fell by a quarter year on year</td></tr>
+        <tr><td>IG Group</td><td>Q1 FY2025</td><td>263,200, down 1% YoY</td><td>£278.9m, +15% YoY</td><td>≈£1,060 revenue per client per quarter (my estimate, not reported) ≈ £4,240 a year</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap" style="margin-top:8px"><b>What this changes in the model.</b> XTB is the clearest warning for the "buy growth" lever: as its client base grew 24-fold, revenue per active client collapsed, not just acquisition cost. I've added a new slider for that effect. Its default of 20% is well under the 76% XTB saw, because that figure also reflects six years of product mix shift (XTB added stocks, ETPs and lower-margin instruments), not acquisition speed alone.</p>
+    <p class="cap"><b>What this doesn't settle.</b> CMC's 80% "client income retained" is a different metric to this model's A-book cost or B-book result sliders, and one data point from 2022 is not a trend, so I haven't used it to move either. IG's revenue-per-client figure is my own division of two reported totals, not a number IG publishes, and its one-year comparison doesn't show whether a 28-month average client life is too short or too long for a more institutional client base. A true comparison would need each broker's own cohort or tenure data, which none of these disclosures give.</p>
+    <p class="cap">Sources: <a href="https://ir.xtb.com/en/xtb-ends-2025-with-a-record-of-eur-506-7-mm-operating-income-and-2-16-mm-clients/">XTB FY2025 results</a>, <a href="https://datalab.financemagnates.com/market-insights/xtb-at-pln-2-15-billion-revenue-rose-9x-in-six-years-while-profitability-per-client-fell-76">XTB per-client trend, 2019–2025</a>, <a href="https://www.financemagnates.com/forex/brokers/cmc-markets-retains-over-80-client-income-in-q1-fy22/amp">CMC Markets Q1 FY2022</a>, <a href="https://www.financemagnates.com/forex/ig-group-ends-q1-fy25-with-15-revenue-jump-revenue-per-client-rises">IG Group Q1 FY2025</a>.</p>
+  </section>
+  <section class="notes">
+    <div class="card">
+      <h2>What the listed data says about the 50/50 split</h2>
+      <p class="cap">Plus500 reports client spreads and fees (customer income) separately from the house result on client positions (customer trading performance). It is close to a pure B-book, so a hybrid broker may differ.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Period</th><th>Customer income</th><th>House result</th><th>Result / income</th></tr></thead>
+        <tbody>
+          <tr><td>Q1 2024</td><td>$169.6m</td><td>+$30.6m</td><td>+18.0%</td></tr>
+          <tr><td>Q4 2024</td><td>$171.9m</td><td>−$2.6m</td><td>−1.5%</td></tr>
+          <tr><td>Q1 2025</td><td>$176.3m</td><td>+$15.4m</td><td>+8.7%</td></tr>
+          <tr><td>H1 2025</td><td>$371.5m</td><td>+$14.0m</td><td>+3.8%</td></tr>
+          <tr><td>H1 2026</td><td>$460.8m</td><td>−$19.0m</td><td>−4.1%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="cap" style="margin-top:8px">H1 figures are trading income less customer income. As a share of revenue, the house result is small and customer income is nearly all of it. So the split only makes sense as a share of variability. In Q1 2026 customer income rose 53% while revenue rose 18%, which is why the model has a natural hedge between activity and the book result.</p>
+      <p class="cap">Sources: <a href="https://www.financemagnates.com/forex/plus500s-q1-revenue-jumps-with-an-increase-of-new-customers/amp">Q1 2024</a>, <a href="https://fxnewsgroup.com/forex-news/retail-forex/plus500-registers-13-q-q-rise-and-5-y-y-drop-in-revenues-in-q1-2025/">Q4 2024 and Q1 2025</a>, <a href="https://www.ajbell.co.uk/news/articles/plus500-backs-guidance-posts-record-sales-after-outstanding-half">H1 2026</a>, <a href="https://www.morningstar.co.uk/uk/news/AN_1776673689266651500/plus500-expects-sales-and-profit-ahead-of-hopes-amid-market-volatility.aspx">Q1 2026</a>.</p>
+    </div>
+    <div class="card">
+      <h2>Limits of this draft</h2>
+      <ul>
+        <li>One blended client. No client tiers, regions or IB-introduced clients as separate groups.</li>
+        <li>Shock sizes are my assumptions, not fitted to a real broker's history. Book data from a target would replace them.</li>
+        <li>Average life of 28 months is Plus500's FY2025 active clients ÷ new clients (242,000 ÷ 104,500). Its Q1 2025 figures give about 15 months. None of XTB, CMC or IG publish a cohort table either, so this stays an estimate.</li>
+        <li>The new ARPU-decline-on-growth slider is calibrated to one broker's six-year trend, which bundles acquisition pace with product mix change. Treat it as illustrative, not fitted.</li>
+        <li>Exit multiple and purchase price are placeholders, because the deck gives neither.</li>
+        <li>The management revenue share starts at 0% because the deck gives no rate. Move the slider to see what it costs.</li>
+        <li>Single currency and one acquisition. The second deal the roadmap expects in year two is not modelled.</li>
+        <li>The roadmap's headcount path sets the pace of cost savings. The migration loss is one event in one month.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+</div>
+
+<script id="engine">
+/* Engine: pure functions, no DOM. Money in £, time in months. */
+const ENG=(()=>{
+  const T=60,AMAX=1200,PATHS=300,F=5;
+  const lanczos=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  function gamma(x){if(x<.5)return Math.PI/(Math.sin(Math.PI*x)*gamma(1-x));x-=1;let a=.99999999999980993,t=x+7.5;lanczos.forEach((c,i)=>a+=c/(x+i+1));return Math.sqrt(2*Math.PI)*Math.pow(t,x+.5)*Math.exp(-t)*a}
+  function curves(p){
+    const k=p.k,lam=p.L/gamma(1+1/k),g=p.tenure/100,S=new Float64Array(AMAX+2),Tt=new Float64Array(AMAX+2);
+    for(let a=0;a<=AMAX+1;a++){S[a]=Math.exp(-Math.pow((a+.5)/lam,k));Tt[a]=1+g*Math.min(a,60)/12}
+    let Ln=0,Tb=0;for(let a=0;a<=AMAX;a++){Ln+=S[a];Tb+=S[a]*Tt[a]}Tb/=Ln;
+    const Tn=Tt.map(v=>v/Tb),h=new Float64Array(AMAX+1);for(let a=0;a<=AMAX;a++)h[a]=1-S[a+1]/S[a];
+    let cs=new Float64Array(AMAX+2),cw=new Float64Array(AMAX+2);
+    for(let a=AMAX;a>=0;a--){cs[a]=cs[a+1]+S[a];cw[a]=cw[a+1]+S[a]*Tn[a]}
+    const R=new Float64Array(T+1),wb=new Float64Array(T+1),h0=new Float64Array(T+1);
+    for(let t=0;t<=T;t++){R[t]=cs[t]/Ln;wb[t]=cw[t]/cs[t]}
+    for(let t=0;t<T;t++)h0[t]=1-R[t+1]/R[t];
+    return{S,h,Tn,R,wb,h0,Ln};
+  }
+  const PX=[0,3.3,6,12,24],PY=[0,.08,.40,.81,1]; /* roadmap headcount: 90, 85, 65, 40, 28 */
+  function prog(t,tr){if(tr<=0)return 1;const m=t*24/tr;if(m>=24)return 1;for(let i=1;i<5;i++)if(m<PX[i])return PY[i-1]+(PY[i]-PY[i-1])*(m-PX[i-1])/(PX[i]-PX[i-1]);return 1}
+  function path(p,c,Z,i,bk,fn,out,rec){
+    const a=p.aShare/100,hc=p.aCost/100,mu=p.edge/100,beta=p.beta/100,v=p.volReg,sa=p.sa/100,se=p.se/100,sy=p.sadds/100,sc=p.schurn/100;
+    const phiA=.8,phiF=.9,qa=Math.sqrt(1-phiA*phiA),qf=Math.sqrt(1-phiF*phiF);
+    const ref=Math.max(1,p.N0/p.L),eta=Math.log2(1+p.cacEl/100),etaA=Math.log2(1+(p.arpuEl||0)/100),vp=p.varPct/100,lk=p.leak/100,lic=p.lic*1e6/12,ph=p.opexVar/100;
+    const n=path.n||(path.n=new Float64Array(T));n.fill(0);
+    let b=p.N0,x=0,y=0,cc=0,cash=(p.raise-p.price)*1e6,minCash=cash,prevN=p.N0,yE=0,yRev=0,yEx=0,lastEx=0;
+    for(let t=0;t<T;t++){
+      if(Z){const o=i*T*F+t*F;
+        if(bk)x=phiA*x+qa*sa*Z[o];
+        if(fn){y=phiF*y+qf*sy*Z[o+2];cc=phiF*cc+qf*sc*Z[o+3]}
+      }
+      const m=fn&&Z?Math.exp(cc-sc*sc/2):1,pr=prog(t,p.trans);
+      b*=1-Math.min(1,c.h0[t]*m);if(t>0){for(let w=0;w<t;w++)n[w]*=1-Math.min(1,c.h[t-1-w]*m)}
+      if(t===p.migM&&p.mig>0){const f=1-p.mig/100;b*=f;for(let w=0;w<t;w++)n[w]*=f}
+      const nomAdds=p.adds*(1+p.addsChg/100*pr),adds=nomAdds*(fn&&Z?Math.exp(y-sy*sy/2):1);
+      n[t]=adds*c.S[0];
+      let N=b,W=b*c.wb[t+1];for(let w=0;w<=t;w++){N+=n[w];W+=n[w]*c.Tn[t-w]}
+      const A=v*(bk&&Z?Math.exp(x-sa*sa/2):1),eps=bk&&Z?se*Z[i*T*F+t*F+1]:0,e=mu-beta*(A-1)+eps;
+      const rptMult=nomAdds>0?Math.pow(nomAdds/ref,-etaA):1;
+      const CI=W*p.trades*p.rpt*rptMult*A,hedge=CI*a*hc,bres=CI*(1-a)*e,intr=N*p.interest/12,rev=CI-hedge+bres+intr;
+      const cac=p.cac*(nomAdds>0?Math.pow(nomAdds/ref,eta):1),mkt=adds*cac;
+      const opex=(p.opex0+(p.opex1-p.opex0)*pr)*1e6/12*((1-ph)+ph*N/10000);
+      const vr=Math.max(rev,0)*vp,lkg=Math.max(rev,0)*lk,one=p.trans>0?(t<p.trans?p.oneoff*1e6/p.trans:0):(t===0?p.oneoff*1e6:0);
+      const ex=rev-vr-lkg-opex-mkt-lic,eb=ex-one;
+      const gap=(bk&&Z&&Z[i*T*F+t*F+4]<p.gapP/100/12)?N*(1-a)*p.gap:0;
+      cash+=eb-gap;yE+=eb-gap;yRev+=rev;yEx+=ex;
+      if(t%12===11){const tx=Math.max(yE,0)*p.tax/100;cash-=tx;const yr=(t+1)/12-1;if(out){out.yr[yr]=yRev}lastEx=yEx;yE=0;yRev=0;yEx=0}
+      if(cash<minCash)minCash=cash;
+      if(out&&out.rm)out.rm[t]=rev;
+      if(rec){rec.N[t]=N;rec.book[t]=b;let s=[0,0,0,0,0];for(let w=0;w<=t;w++)s[Math.floor(w/12)]+=n[w];rec.vint[t]=s;rec.CI[t]=CI;rec.hedge[t]=hedge;rec.bres[t]=bres;rec.intr[t]=intr;rec.rev[t]=rev;rec.vr[t]=vr+lkg;rec.opex[t]=opex;rec.mkt[t]=mkt;rec.lic[t]=lic;rec.one[t]=one;rec.eb[t]=eb;rec.ex[t]=ex;rec.adds[t]=adds;rec.lost[t]=prevN+adds-N;rec.cash[t]=cash}
+      prevN=N;
+    }
+    const fund=Math.max(0,-minCash),ev=Math.max(0,lastEx)*p.multiple,val=Math.max(0,ev+cash+fund),inv=p.raise*1e6+fund;
+    if(out){out.moic=val/inv;out.minCash=minCash}
+    if(rec){rec.moic=val/inv;rec.ev=ev;rec.exitCash=cash}
+  }
+  function base(p){
+    const c=curves(p),mk=()=>new Float64Array(T);
+    const rec={N:mk(),book:mk(),vint:new Array(T),CI:mk(),hedge:mk(),bres:mk(),intr:mk(),rev:mk(),vr:mk(),opex:mk(),mkt:mk(),lic:mk(),one:mk(),eb:mk(),ex:mk(),adds:mk(),lost:mk(),cash:mk()};
+    path(p,c,null,0,false,false,null,rec);rec.c=c;return rec;
+  }
+  function unit(p,c){
+    const a=p.aShare/100,v=p.volReg,net=1-p.varPct/100-p.leak/100;
+    const m=(p.trades*p.rpt*v*((1-a*p.aCost/100)+(1-a)*(p.edge/100-p.beta/100*(v-1)))+p.interest/12)*net;
+    let ltv=0,cum=0,pay=null;
+    for(let t=0;t<120;t++){const cf=m*c.S[t]*c.Tn[t];ltv+=cf/Math.pow(1.12,t/12);cum+=cf;if(pay===null&&cum>=p.cac)pay=t+1}
+    return{m,ltv,pay,arpu:p.trades*p.rpt*v*12};
+  }
+  let Z=null;
+  function noise(){if(Z)return Z;Z=new Float32Array(PATHS*T*F);let s=20261102;const r=()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+    for(let i=0;i<Z.length;i++)Z[i]=(i%F===4)?r():Math.sqrt(-2*Math.log(r()+1e-12))*Math.cos(2*Math.PI*r());return Z}
+  const vr=a=>{const m=a.reduce((x,y)=>x+y,0)/a.length;return[a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length,m]};
+  function annualVar(p,c,bk,fn){const out={yr:new Float64Array(5)},Y=[[],[],[],[],[]];for(let i=0;i<PATHS;i++){path(p,c,noise(),i,bk,fn,out);for(let k=0;k<5;k++)Y[k].push(out.yr[k])}return Y.map(vr)}
+  function shares(p,c){const b=annualVar(p,c,true,false),f=annualVar(p,c,false,true);return b.map((x,k)=>{const d=x[0]+f[k][0];return d>0?x[0]/d:.5})}
+  function mc(p){
+    const c=curves(p),Zz=noise(),b=annualVar(p,c,true,false),f=annualVar(p,c,false,true);
+    const rm=new Float64Array(T),out={yr:new Float64Array(5),rm},store=new Float32Array(PATHS*T),Y=[[],[],[],[],[]],mo=[],mins=[];
+    for(let i=0;i<PATHS;i++){path(p,c,Zz,i,true,true,out);store.set(rm,i*T);for(let k=0;k<5;k++)Y[k].push(out.yr[k]);mo.push(out.moic);mins.push(out.minCash)}
+    const both=Y.map(vr),years=b.map((x,k)=>{const d=x[0]+f[k][0];return{shareB:d>0?x[0]/d:.5,cv:both[k][1]?Math.sqrt(both[k][0])/both[k][1]:0}});
+    const q10=new Float64Array(T),q50=new Float64Array(T),q90=new Float64Array(T),col=new Float32Array(PATHS);
+    for(let t=0;t<T;t++){for(let i=0;i<PATHS;i++)col[i]=store[i*T+t];col.sort();q10[t]=col[30]*12;q50[t]=col[150]*12;q90[t]=col[269]*12}
+    mo.sort((x,y)=>x-y);
+    return{years,q10,q50,q90,moics:mo,p10:mo[30],p50:mo[150],p90:mo[269],p3x:mo.filter(m=>m>=3).length/PATHS,p1x:mo.filter(m=>m<1).length/PATHS,pBreach:mins.filter(m=>m<p.floor*1e6).length/PATHS};
+  }
+  function rescale(p,target,yr){const q={...p};let cap=false;for(let it=0;it<4;it++){const c=curves(q),b=annualVar(q,c,true,false)[yr][0],f=annualVar(q,c,false,true)[yr][0];if(b<=0||f<=0)break;const g=Math.sqrt(target*f/((1-target)*b));q.sa=q.sa*g;q.se=q.se*g;if(q.sa>60){q.sa=60;cap=true}if(q.se>60){q.se=60;cap=true}}q.sa=Math.max(1,Math.round(q.sa));q.se=Math.max(1,Math.round(q.se));return{q,cap}}
+  return{T,curves,base,unit,mc,rescale,shares};
+})();
+if(typeof module!=="undefined")module.exports=ENG;
+</script>
+
+<script>
+const DEF={N0:10000,adds:357,L:28,k:.7,tenure:15,cac:800,cacEl:15,arpuEl:20,mig:0,migM:18,addsChg:0,
+  trades:20,rpt:6.5,aShare:30,aCost:40,edge:8,volReg:1,beta:30,interest:100,
+  sa:20,se:20,sadds:25,schurn:20,gapP:10,gap:500,
+  opex0:8.7,opex1:5,trans:24,opexVar:30,varPct:20,lic:.6,oneoff:5,leak:0,
+  raise:25,price:14,floor:4,multiple:8,tax:9};
+const PRESETS=[
+  {id:"pitched",name:"Constellation as pitched",set:{}},
+  {id:"stress",name:"Constellation stressed",set:{mig:20,addsChg:-30,cac:950,opex1:6}},
+  {id:"bought",name:"Target as bought",set:{opex1:8.7,oneoff:0,trans:24}},
+  {id:"scale",name:"Buy growth",set:{adds:800,cac:800}},
+  {id:"abook",name:"Mostly A-book",set:{aShare:80}}
+];
+const money=x=>{const s=x<0?"−":"",a=Math.abs(x);return s+"£"+(a>=1e6?(a/1e6).toFixed(1)+"m":a>=1e4?Math.round(a/1e3)+"k":Math.round(a).toLocaleString("en-GB"))};
+const mm=x=>{const s=x<0?"−":"";return s+"£"+(Math.abs(x)/1e6).toFixed(1)+"m"};
+const num=x=>Math.round(x).toLocaleString("en-GB");
+const pc=x=>x+"%";
+const CTRL=[
+ {g:"Client funnel",c:"f",i:[
+  {k:"N0",l:"Clients at the start",min:1000,max:100000,st:500,f:num,s:"Deck p11",n:"The target has about 10,000 active funded clients."},
+  {k:"adds",l:"New clients a month",min:0,max:5000,st:1,f:num,s:"Assumption",n:"Set to hold 10,000 clients flat at a 28-month life."},
+  {k:"L",l:"Average client life (months)",min:3,max:120,st:1,f:x=>x,s:"Plus500",n:"FY2025 active ÷ new clients gives 28. Q1 2025 gives about 15."},
+  {k:"k",l:"Churn shape",min:.4,max:1.5,st:.05,f:x=>(+x).toFixed(2),s:"Assumption",n:"Below 1: heavy early losses and a loyal core. 1: constant churn."},
+  {k:"tenure",l:"Extra activity per year of tenure",min:0,max:40,st:1,f:pc,s:"Assumption",n:"Plus500 gets about half of OTC revenue from clients of 5+ years."},
+  {k:"cac",l:"Cost to acquire a client",min:100,max:3000,st:25,f:x=>"£"+num(x),s:"Assumption",n:"Plus500's latest is $1,230, about £970. XTB's blended CAC is roughly £140, but on a much lower-value, more diversified client base."},
+  {k:"cacEl",l:"Rise in CAC when new clients double",min:0,max:60,st:1,f:pc,s:"Assumption"},
+  {k:"arpuEl",l:"Fall in revenue per client when buying growth",min:0,max:60,st:1,f:pc,s:"XTB",n:"XTB's revenue per active client fell 76% as its base grew 24x, 2020–2025. That mixes years of product and mix change, so treat this as an upper bound, not a clean estimate."},
+  {k:"addsChg",l:"Change in new clients once agents run sales",min:-80,max:80,st:5,f:x=>(x>0?"+":"")+x+"%",s:"Assumption",n:"The deck moves sales from 25 people to 1 and gives no effect on new clients."},
+  {k:"mig",l:"Client loss on rebrand and platform move",min:0,max:50,st:1,f:pc,s:"Assumption",n:"The deck lists this risk but gives no size."},
+  {k:"migM",l:"Month of that loss",min:1,max:36,st:1,f:x=>x,s:"Roadmap",n:"Rebrand in year 1, external technology gone within 2 years."}
+ ]},
+ {g:"Book and market",c:"k",i:[
+  {k:"trades",l:"Trades per client a month",min:1,max:100,st:1,f:x=>x,s:"Assumption"},
+  {k:"rpt",l:"Average revenue per trade",min:1,max:40,st:.25,f:x=>"£"+(+x).toFixed(2),s:"Assumption",n:"Spread, overnight and fees. Set with trades so the target starts near breakeven."},
+  {k:"aShare",l:"Flow sent to the A-book",min:0,max:100,st:5,f:pc,s:"Assumption",n:"The deck asks for a hybrid book and gives no split."},
+  {k:"aCost",l:"A-book cost, share of income on hedged flow",min:0,max:80,st:5,f:pc,s:"Assumption"},
+  {k:"edge",l:"B-book result, share of income",min:-15,max:30,st:1,f:x=>(x>0?"+":"")+x+"%",s:"Plus500",n:"Ranged from −4% to +18% across the periods in the table below."},
+  {k:"volReg",l:"Market volatility: activity vs normal",min:.6,max:1.6,st:.05,f:x=>(+x).toFixed(2)+"×",s:"Assumption"},
+  {k:"beta",l:"Natural hedge: points of result lost per 100% more activity",min:0,max:60,st:5,f:x=>x,s:"Assumption",n:"Busy markets lift income and cut the book result."},
+  {k:"interest",l:"Interest on client money, per client a year",min:0,max:400,st:10,f:x=>"£"+x,s:"Plus500",n:"Interest was about 5% to 7% of Plus500's revenue in the half-years above."}
+ ]},
+ {g:"Size of the shocks",c:"c",i:[
+  {k:"sa",l:"Market activity swings",min:0,max:60,st:1,f:pc,s:"Assumption"},
+  {k:"se",l:"Monthly B-book result swings",min:0,max:60,st:1,f:pc,s:"Plus500",n:"Scaled from the quarterly range in the table below."},
+  {k:"sadds",l:"New client swings",min:0,max:80,st:1,f:pc,s:"Assumption"},
+  {k:"schurn",l:"Churn swings",min:0,max:80,st:1,f:pc,s:"Assumption"},
+  {k:"gapP",l:"Chance of a gap day each year",min:0,max:40,st:1,f:pc,s:"Assumption"},
+  {k:"gap",l:"Gap loss per B-booked client",min:0,max:3000,st:50,f:x=>"£"+num(x),s:"Assumption",n:"Negative balance protection means the house takes this. Reduces cash, not revenue."}
+ ]},
+ {g:"Costs",c:"c",i:[
+  {k:"opex0",l:"Operating cost today (per 10,000 clients)",min:2,max:15,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p10"},
+  {k:"opex1",l:"Operating cost after transition",min:2,max:15,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p10"},
+  {k:"trans",l:"Transition length (months)",min:0,max:48,st:1,f:x=>x,s:"Roadmap",n:"Savings follow the roadmap's headcount path, scaled to this length."},
+  {k:"opexVar",l:"Share of operating cost that scales with clients",min:0,max:100,st:5,f:pc,s:"Assumption"},
+  {k:"varPct",l:"Liquidity, payments, IBs (share of revenue)",min:0,max:50,st:1,f:pc,s:"Assumption",n:"The deck excludes these from its cost table."},
+  {k:"lic",l:"Licence and regulatory fees a year",min:0,max:3,st:.1,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption"},
+  {k:"oneoff",l:"One-off build and restructuring",min:0,max:15,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Deck p16",n:"The deck's team and technology tranche."},
+  {k:"leak",l:"Management revenue share",min:0,max:15,st:.5,f:pc,s:"Deck, no rate",n:"The deck says management earns one and gives no percentage."}
+ ]},
+ {g:"Deal and exit",c:"c",i:[
+  {k:"raise",l:"Equity raised",min:5,max:100,st:1,f:x=>"£"+x+"m",s:"Deck p16"},
+  {k:"price",l:"Price and deal costs",min:0,max:60,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption",n:"The deck caps price, capital and costs at about £20m."},
+  {k:"floor",l:"Capital that must stay in the business",min:0,max:20,st:.5,f:x=>"£"+(+x).toFixed(1)+"m",s:"Assumption"},
+  {k:"multiple",l:"Exit multiple of EBITDA",min:2,max:20,st:.5,f:x=>(+x).toFixed(1)+"×",s:"Assumption"},
+  {k:"tax",l:"Tax on profit",min:0,max:30,st:1,f:pc,s:"UAE headline"}
+ ]}
+];
+const COLR={f:"var(--funnel)",k:"var(--book)",c:"var(--deal)"};
+const $=s=>document.getElementById(s);
+const KEY="cfd-flight-deck-v1";
+let P={...DEF},activePreset="pitched",pin=null;
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.p){P={...DEF,...s.p};activePreset=s.a||null}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({p:P,a:activePreset}))}catch(e){}}
+
+$("controls").innerHTML=CTRL.map(g=>`<fieldset><legend><i style="background:${COLR[g.c]}"></i>${g.g}</legend>`+g.i.map(i=>`<div class="ctl"><label for="c_${i.k}">${i.l}</label><output id="o_${i.k}" for="c_${i.k}"></output><input class="${g.c}" type="range" id="c_${i.k}" min="${i.min}" max="${i.max}" step="${i.st}"><small><span class="src">${i.s}.</span>${i.n?" "+i.n:""}</small></div>`).join("")+`</fieldset>`).join("");
+const ITEMS=CTRL.flatMap(g=>g.i);
+function syncCtl(){ITEMS.forEach(i=>{$("c_"+i.k).value=P[i.k];$("o_"+i.k).textContent=i.f(P[i.k])})}
+ITEMS.forEach(i=>$("c_"+i.k).addEventListener("input",e=>{P[i.k]=+e.target.value;$("o_"+i.k).textContent=i.f(P[i.k]);activePreset=null;$("rebalMsg").textContent="";schedule()}));
+$("presets").innerHTML=PRESETS.map(s=>`<button id="p_${s.id}" data-p="${s.id}">${s.name}</button>`).join("")+`<button id="pinBtn" style="margin-left:auto">Pin as baseline</button>`;
+$("presets").addEventListener("click",e=>{const id=e.target.dataset.p;if(id){P={...DEF,...PRESETS.find(s=>s.id===id).set};activePreset=id;$("rebalMsg").textContent="";syncCtl();schedule()}});
+$("pinBtn").addEventListener("click",()=>{if(pin){pin=null}else{pin=lastKpi}render()});
+$("rebal").addEventListener("click",()=>{const r=ENG.rescale(P,+$("tgtShare").value,+$("tgtYear").value);P=r.q;activePreset=null;syncCtl();$("rebalMsg").textContent=r.cap?"Shocks hit the slider limit, so the target was not fully reached.":"Book shocks rescaled.";schedule()});
+let pending=false;function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;render()})}
+
+/* chart helpers */
+const nice=(max)=>{if(max<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(max))),f=max/e;return(f<=1?1:f<=2?2:f<=4?4:f<=6?6:f<=8?8:10)*e};
+function frame(el,h,ymin,ymax,fy,ml){
+  const w=Math.max(280,el.clientWidth||520),m={l:ml||52,r:12,t:10,b:24},iw=w-m.l-m.r,ih=h-m.t-m.b;
+  const X=t=>m.l+t/(ENG.T-1)*iw,Y=v=>m.t+ih-(v-ymin)/(ymax-ymin)*ih;
+  const st=(ymax-ymin)/4;let g="";for(let i=0;i<=4;i++){const v=ymin+st*i,y=Y(v);g+=`<line x1="${m.l}" x2="${w-m.r}" y1="${y}" y2="${y}" stroke="var(--grid)"/><text x="${m.l-6}" y="${y+4}" text-anchor="end">${fy(v)}</text>`}
+  for(let yr=1;yr<=5;yr++){const x=X(yr*12-1);g+=`<line x1="${x}" x2="${x}" y1="${m.t}" y2="${m.t+ih}" stroke="var(--grid)"/><text x="${x}" y="${h-8}" text-anchor="end">Y${yr}</text>`}
+  return{w,h,m,iw,ih,X,Y,g};
+}
+function hover(el,fr,render){
+  const svg=el.querySelector("svg"),tip=document.createElement("div"),cross=el.querySelector(".cross");tip.className="tip";tip.hidden=true;el.appendChild(tip);
+  const move=e=>{const r=el.getBoundingClientRect(),px=e.clientX-r.left,t=Math.max(0,Math.min(ENG.T-1,Math.round((px-fr.m.l)/fr.iw*(ENG.T-1))));
+    tip.innerHTML=render(t);tip.hidden=false;const x=fr.X(t);if(cross){cross.setAttribute("x1",x);cross.setAttribute("x2",x);cross.style.display=""}
+    const tw=tip.offsetWidth;tip.style.left=Math.min(Math.max(0,x+10),r.width-tw)+"px";if(x+10+tw>r.width)tip.style.left=Math.max(0,x-tw-10)+"px";tip.style.top="6px"};
+  svg.addEventListener("pointermove",move);svg.addEventListener("pointerdown",move);
+  svg.addEventListener("pointerleave",()=>{tip.hidden=true;if(cross)cross.style.display="none"});
+}
+const crossLine=f=>`<line class="cross" y1="${f.m.t}" y2="${f.m.t+f.ih}" stroke="var(--ink)" stroke-width="1" style="display:none"/>`;
+const mlabel=t=>`Month ${t+1} (Y${Math.floor(t/12)+1})`;
+
+function drawStack(B){
+  const el=$("chStack"),T=ENG.T,ss=(P.adds*(1+P.addsChg/100))*P.L;
+  const layers=[{n:"Acquired book",c:"var(--neutral)",v:t=>B.book[t]}].concat([0,1,2,3,4].map(i=>({n:"Joined Y"+(i+1),c:`var(--v${i+1})`,v:t=>B.vint[t][i]})));
+  $("lgStack").innerHTML=layers.map(l=>`<span><i style="background:${l.c}"></i>${l.n}</span>`).join("")+`<span><i class="dash"></i>Steady state ${num(ss)}</span>`;
+  const top=nice(Math.max(...B.N,ss)*1.02),f=frame(el,260,0,top,v=>v>=1000?(v/1000)+"k":v);
+  let base=new Float64Array(T),s="";
+  layers.forEach(l=>{let up="",dn="";for(let t=0;t<T;t++){const y0=base[t],y1=y0+l.v(t);up+=`${f.X(t).toFixed(1)},${f.Y(y1).toFixed(1)} `;dn=`${f.X(t).toFixed(1)},${f.Y(y0).toFixed(1)} `+dn;base[t]=y1}
+    s+=`<polygon points="${up}${dn}" fill="${l.c}" stroke="var(--panel)" stroke-width="1"/>`});
+  const yss=f.Y(ss);
+  el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Active clients by year of joining">${f.g}${s}<line x1="${f.m.l}" x2="${f.w-f.m.r}" y1="${yss}" y2="${yss}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
+  hover(el,f,t=>{let h=`<b>${mlabel(t)}</b>: ${num(B.N[t])} clients`;layers.forEach(l=>{const v=l.v(t);if(v>=.5)h+=`<br>${l.n}: ${num(v)}`});return h});
+}
+function drawSurv(B){
+  const el=$("chSurv"),c=B.c,f=frame(el,260,0,100,v=>v+"%",44);
+  let pts="",area="";for(let t=0;t<ENG.T;t++)pts+=`${f.X(t).toFixed(1)},${f.Y(c.S[t]*100).toFixed(1)} `;
+  area=`${f.X(0)},${f.Y(0)} ${pts}${f.X(ENG.T-1)},${f.Y(0)}`;
+  const L=Math.min(ENG.T-1,P.L-1),xL=f.X(L),yL=f.Y(c.S[L]*100);
+  const anchor=xL>f.w-150?"end":"start",tx=anchor==="end"?xL-8:xL+8;
+  el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Share of a group of new clients still active by months since joining">${f.g}<polygon points="${area}" fill="var(--funnel)" opacity=".12"/><polyline points="${pts}" fill="none" stroke="var(--funnel)" stroke-width="2"/>${P.L<=ENG.T?`<circle cx="${xL}" cy="${yL}" r="4.5" fill="var(--funnel)" stroke="var(--panel)" stroke-width="2"/><text x="${tx}" y="${yL-8}" text-anchor="${anchor}" style="fill:var(--ink)">Average life ${P.L}m: ${Math.round(c.S[L]*100)}% still here</text>`:""}${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
+  hover(el,f,t=>`<b>${t+1} months after joining</b><br>${Math.round(c.S[t]*100)} of 100 clients still active`);
+}
+function drawFan(B,M){
+  const el=$("chFan"),T=ENG.T,cost=t=>(B.vr[t]+B.opex[t]+B.mkt[t]+B.lic[t]+B.one[t])*12;
+  let mx=0;for(let t=0;t<T;t++)mx=Math.max(mx,M.q90[t],cost(t));
+  const f=frame(el,260,0,nice(mx*1.02),v=>"£"+Number((v/1e6).toFixed(2))+"m");
+  let hi="",lo="",md="",co="";for(let t=0;t<T;t++){const x=f.X(t).toFixed(1);hi+=`${x},${f.Y(M.q90[t]).toFixed(1)} `;lo=`${x},${f.Y(M.q10[t]).toFixed(1)} `+lo;md+=`${x},${f.Y(M.q50[t]).toFixed(1)} `;co+=`${x},${f.Y(cost(t)).toFixed(1)} `}
+  el.innerHTML=`<svg height="${f.h}" viewBox="0 0 ${f.w} ${f.h}" role="img" aria-label="Revenue range and costs by month">${f.g}<polygon points="${hi}${lo}" fill="var(--funnel)" opacity=".2"/><polyline points="${md}" fill="none" stroke="var(--funnel)" stroke-width="2"/><polyline points="${co}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>${crossLine(f)}<rect x="${f.m.l}" y="${f.m.t}" width="${f.iw}" height="${f.ih}" fill="transparent"/></svg>`;
+  hover(el,f,t=>`<b>${mlabel(t)}</b><br>P90 ${mm(M.q90[t])}<br>Median ${mm(M.q50[t])}<br>P10 ${mm(M.q10[t])}<br>Costs ${mm(cost(t))}`);
+}
+function drawShares(M){
+  $("shares").innerHTML=`<span class="hd"></span><span class="hd">Share of revenue variance</span><span class="hd" style="text-align:right">± rev.</span>`+M.years.map((y,i)=>{const b=Math.round(y.shareB*100),fn=100-b;
+    return `<span>Y${i+1}</span><div class="bar" title="Year ${i+1}: funnel ${fn}%, book and market ${b}%"><div class="f" style="flex:${Math.max(fn,1)} 1 0">${fn>=14?fn+"%":""}</div><div class="k" style="flex:${Math.max(b,1)} 1 0">${b>=14?b+"%":""}</div></div><span style="text-align:right;font-family:var(--mono)">${Math.round(y.cv*100)}%</span>`}).join("");
+}
+function drawTornado(B){
+  const el=$("chTor"),ex=b=>{let s=0;for(let t=48;t<60;t++)s+=b.ex[t];return s},b0=ex(B);
+  const defs=[["adds","New clients a month","f"],["L","Average client life","f"],["cac","Cost to acquire a client","f"],["N0","Clients at the start","f"],["arpuEl","ARPU hit from buying growth","f"],["trades","Trades per client","k"],["rpt","Revenue per trade","k"],["volReg","Market volatility","k"],["opex1","End-state operating cost","c"],["varPct","Liquidity, payments, IBs","c"]];
+  const rows=defs.map(([k,l,g])=>{const lo=ex(ENG.base({...P,[k]:P[k]*.8})),hi=ex(ENG.base({...P,[k]:P[k]*1.2}));return{l,g,lo,hi}});
+  rows.push({l:"B-book result ±4 pts",g:"k",lo:ex(ENG.base({...P,edge:P.edge-4})),hi:ex(ENG.base({...P,edge:P.edge+4}))});
+  rows.push({l:"A-book share ±10 pts",g:"k",lo:ex(ENG.base({...P,aShare:Math.max(0,P.aShare-10)})),hi:ex(ENG.base({...P,aShare:Math.min(100,P.aShare+10)}))});
+  rows.sort((a,b)=>Math.abs(b.hi-b.lo)-Math.abs(a.hi-a.lo));
+  const w=Math.max(280,el.clientWidth||520),narrow=w<480,lw=narrow?124:168,rh=22,h=rows.length*rh+22,vmax=Math.max(...rows.flatMap(r=>[Math.abs(r.lo-b0),Math.abs(r.hi-b0)]),1),pad=58,cx=lw+pad+(w-lw-2*pad)/2,sc=(w-lw-2*pad)/2/vmax;
+  let s=`<line x1="${cx}" x2="${cx}" y1="0" y2="${h-18}" stroke="var(--ink)"/><text x="${cx}" y="${h-4}" text-anchor="middle">Base ${mm(b0)}</text>`;
+  rows.forEach((r,i)=>{const y=i*rh+4,a=Math.min(r.lo,r.hi)-b0,b=Math.max(r.lo,r.hi)-b0,x0=cx+a*sc,x1=cx+b*sc;
+    s+=`<text x="${lw-6}" y="${y+11}" text-anchor="end" style="fill:var(--ink);font-family:var(--body);font-size:${narrow?10:12}px">${r.l}</text><rect x="${x0}" y="${y}" width="${Math.max(1,x1-x0)}" height="14" rx="2" fill="${COLR[r.g]}"><title>${r.l}: ${mm(Math.min(r.lo,r.hi))} to ${mm(Math.max(r.lo,r.hi))}</title></rect><text x="${x0-4}" y="${y+11}" text-anchor="end">${mm(Math.min(r.lo,r.hi))}</text><text x="${x1+4}" y="${y+11}">${mm(Math.max(r.lo,r.hi))}</text>`});
+  el.innerHTML=`<svg height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Sensitivity of Year 5 EBITDA">${s}</svg>`;
+}
+function drawMoic(M){
+  const el=$("chMoic"),w=Math.max(280,el.clientWidth||520),h=260,m={l:36,r:12,t:18,b:30},iw=w-m.l-m.r,ih=h-m.t-m.b,bw=.5,xmax=Math.max(4,Math.min(10,Math.ceil(M.p90+1))),nb=Math.round(xmax/bw),c=new Array(nb).fill(0);
+  M.moics.forEach(v=>{c[Math.min(nb-1,Math.floor(v/bw))]++});const top=Math.max(...c,1),X=v=>m.l+v/xmax*iw,Y=v=>m.t+ih-v/top*ih,bpx=iw/nb;
+  let s=`<line x1="${m.l}" x2="${w-m.r}" y1="${m.t+ih}" y2="${m.t+ih}" stroke="var(--line)"/>`;
+  c.forEach((v,i)=>{if(!v)return;const x=X(i*bw)+1,y=Y(v);s+=`<rect x="${x}" y="${y}" width="${Math.max(1,bpx-2)}" height="${m.t+ih-y}" rx="2" fill="var(--deal)"><title>${(i*bw).toFixed(1)}x to ${((i+1)*bw).toFixed(1)}x${i===nb-1?" or more":""}: ${Math.round(v/3)}% of paths</title></rect>`});
+  for(let v=0;v<=xmax;v+=xmax>6?2:1)s+=`<text x="${X(v)}" y="${h-12}" text-anchor="middle">${v}x</text>`;
+  [[1,"Money back"],[3,"3x"]].forEach(([v,l])=>{s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${m.t+ih}" stroke="var(--ink)" stroke-dasharray="4 3"/><text x="${X(v)+4}" y="${m.t-5}" style="fill:var(--ink)">${l}</text>`});
+  el.innerHTML=`<svg height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Distribution of investor return multiple">${s}</svg><p class="cap" style="margin:4px 0 0">P10 ${M.p10.toFixed(1)}x · median ${M.p50.toFixed(1)}x · P90 ${M.p90.toFixed(1)}x. Below money back: ${Math.round(M.p1x*100)}% of paths. Falls below the capital floor at some point: ${Math.round(M.pBreach*100)}%.</p>`;
+}
+function drawPnl(B){
+  const sum=(a,y)=>{let s=0;for(let t=y*12;t<y*12+12;t++)s+=a[t];return s},avg=(a,y)=>sum(a,y)/12,Y=[0,1,2,3,4];
+  const row=(l,fn,cl)=>`<tr class="${cl||""}"><td>${l}</td>${Y.map(y=>`<td>${fn(y)}</td>`).join("")}</tr>`,sec=l=>`<tr class="sec"><td colspan="6">${l}</td></tr>`;
+  const neg=a=>y=>mm(-sum(a,y));
+  $("pnl").innerHTML=`<table><thead><tr><th></th>${Y.map(y=>`<th>Year ${y+1}</th>`).join("")}</tr></thead><tbody>`+
+   sec("Clients")+row("Average active",y=>num(avg(B.N,y)))+row("New",y=>num(sum(B.adds,y)))+row("Lost",y=>num(sum(B.lost,y)))+
+   sec("Revenue")+row("Customer income",y=>mm(sum(B.CI,y)))+row("A-book cost",neg(B.hedge))+row("B-book result",y=>mm(sum(B.bres,y)))+row("Interest",y=>mm(sum(B.intr,y)))+row("Revenue",y=>mm(sum(B.rev,y)),"tot")+
+   sec("Costs")+row("Liquidity, payments, IBs, revenue share",neg(B.vr))+row("Operating cost",neg(B.opex))+row("Marketing",neg(B.mkt))+row("Licences",neg(B.lic))+row("One-off build",neg(B.one))+row("EBITDA",y=>mm(sum(B.eb,y)),"tot")+row("Cash at year end",y=>mm(B.cash[y*12+11]))+`</tbody></table>`;
+}
+let lastKpi=null;
+function render(){
+  const B=ENG.base(P),U=ENG.unit(P,B.c),M=ENG.mc(P);
+  const sum=(a,f,t)=>{let s=0;for(let i=f;i<t;i++)s+=a[i];return s};
+  const rev5=sum(B.rev,48,60),eb5=sum(B.ex,48,60),ratio=U.ltv/P.cac,hold=P.N0/P.L,ss=P.adds*(1+P.addsChg/100)*P.L;
+  const k={arpu:U.arpu,ltv:U.ltv,ratio,pay:U.pay,ss,end:B.N[59],rev5,eb5,p50:M.p50,p3x:M.p3x,p1x:M.p1x,breach:M.pBreach};
+  lastKpi=k;
+  const dl=(key,fm)=>{if(!pin)return"";const d=k[key]-pin[key];if(d===0||!isFinite(d))return"no change vs baseline";return(d>0?"+":"−")+fm(Math.abs(d))+" vs baseline"};
+  const rp=ratio>=3?`<span class="pill good">Healthy</span>`:ratio>=1.5?`<span class="pill warn">Thin</span>`:`<span class="pill bad">Loses money</span>`;
+  const tiles=[
+   ["Customer income per client a year",money(U.arpu),dl("arpu",money)||`${P.trades} trades × £${(+P.rpt).toFixed(2)} × 12`],
+   ["Client value, after variable costs",money(U.ltv),dl("ltv",money)||"Over 10 years, discounted at 12%"],
+   ["Client value ÷ CAC",ratio.toFixed(1)+"x",dl("ratio",x=>x.toFixed(1)+"x")||rp],
+   ["CAC payback",U.pay?U.pay+" months":"Over 10 yrs",dl("pay",x=>Math.round(x)+"m")||"Allowing for clients who leave"],
+   ["Clients at end of Year 5",num(B.N[59]),dl("end",num)||`Long-run level ${num(ss)}`],
+   ["Year 5 revenue",mm(rev5),dl("rev5",mm)||"Base case"],
+   ["Year 5 EBITDA",mm(eb5),dl("eb5",mm)||`Margin ${rev5?Math.round(eb5/rev5*100):0}%`],
+   ["Median return",M.p50.toFixed(1)+"x",dl("p50",x=>x.toFixed(1)+"x")||`${Math.round(M.p3x*100)}% of paths reach 3x`]
+  ];
+  $("kpis").innerHTML=tiles.map(t=>`<div class="kpi"><div class="l">${t[0]}</div><div class="v">${t[1]}</div><div class="d">${t[2]}</div></div>`).join("");
+  const Y=M.years,trend=Math.round(Y[0].shareB*100),trendEnd=Math.round(Y[4].shareB*100),gap=P.adds*(1+P.addsChg/100)-hold;
+  const dir=Math.abs(gap)<hold*.02?"so the base holds near":gap>0?"so the base grows towards":"so the base shrinks towards";
+  $("read").innerHTML=`<h2>The read on these inputs</h2>
+   <p><b>Funnel.</b> Holding ${num(P.N0)} clients at a ${P.L}-month life takes ${num(hold)} new clients a month. You are adding ${num(P.adds*(1+P.addsChg/100))} once the transition is done, ${dir} ${num(ss)}. Marketing costs ${mm(sum(B.mkt,48,60))} in Year 5.</p>
+   <p><b>Unit economics.</b> A client is worth ${money(U.ltv)} against ${money(P.cac)} to acquire. ${ratio<1.5?"At that ratio, buying growth destroys value.":ratio<3?"Growth pays, with little room for error.":"Growth pays comfortably if CAC holds as you scale."}</p>
+   <p><b>Variability.</b> Book and market explain ${trend}% of revenue variance in Year 1 and ${trendEnd}% by Year 5. ${trendEnd<trend?"A bad month reverses. A lost client stays lost, and funnel misses accumulate.":"Book and market shocks are outweighing funnel shocks across the horizon."}</p>
+   <p><b>Return.</b> Median ${M.p50.toFixed(1)}x on ${"£"+P.raise+"m"}. ${Math.round(M.p3x*100)}% of paths reach 3x and ${Math.round(M.p1x*100)}% lose money. Base-case exit value is ${mm(B.ev)} plus ${mm(B.exitCash)} cash.</p>`;
+  document.querySelectorAll("#presets [data-p]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===activePreset));
+  $("pinBtn").textContent=pin?"Clear baseline":"Pin as baseline";$("pinBtn").setAttribute("aria-pressed",!!pin);
+  drawStack(B);drawSurv(B);drawFan(B,M);drawShares(M);drawTornado(B);drawMoic(M);drawPnl(B);save();
+}
+syncCtl();render();
+let rt;new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(render,120)}).observe($("chStack"));
+</script>
+
+</body>
+</html>
